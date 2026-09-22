@@ -8,15 +8,15 @@ import { Reveal } from '../motion/Reveal';
 const points = [
   {
     h: 'Fixed supply. No allocation.',
-    p: 'Pons launches a fixed 1,000,000,000 supply straight into a trading pool. No team allocation, no presale. Everyone buys from the same pool from block one.',
+    p: 'Pons launches a fixed 1,000,000,000 supply. No team allocation, no presale. Everyone buys on the same terms from the first block.',
   },
   {
     h: 'Creator fees become buybacks.',
-    p: 'Every trade pays a 1% pool fee and Pons sends 70% of it to the token’s creator. Elysian’s share goes to consistent buybacks of $ELYSIAN.',
+    p: 'Every trade pays the 1% Pons fee and Pons sends 70% of it to the token’s creator. Elysian’s share goes to consistent buybacks of $ELYSIAN.',
   },
   {
-    h: 'One pool. No tax tricks.',
-    p: 'Liquidity never migrates: the pool that launches $ELYSIAN is the pool it trades in for good, with no graduation event to front-run. And there is no tax on top. Trades pay the base 1% Pons fee and nothing else, because buying and selling $ELYSIAN should feel like buying and selling anything else.',
+    h: 'No added tax. Ever.',
+    p: 'The fee on $ELYSIAN is the base 1% Pons fee and nothing else. There is no creator tax on top, and there never will be. Buying and selling $ELYSIAN costs what buying and selling anything on Pons costs.',
   },
 ];
 
@@ -64,7 +64,7 @@ export function Token() {
                   Most launchpads make their money by taxing the trade. Virtuals puts a 1% tax on every trade, routes it through its own token, and opens each launch with a buy tax that starts at 99% and decays over the first minutes, so early buyers pay the platform and the founders. Flap lets creators bolt their own buy and sell taxes onto a token, its own docs show 3% on buys and 10% on sells, and then takes a commission on the tax itself, which is why Flap launches are known for trading heavy. Long does not publish what it charges at all.
                 </p>
                 <p className="mt-3">
-                  Pons charges 1% on a trade and nothing else. 70% of that goes to the project, and of the 30% Pons keeps, 80% buys and burns PONS. The trade is the fairest on offer: a fixed supply with no team allocation, one pool from the first block, and liquidity that never migrates, so there is no graduation moment to snipe. And Pons carries around two thirds of all launchpad fees on Robinhood Chain, which makes it the deepest pool of buyers on the chain.
+                  Pons charges 1% on a trade and nothing else, and $ELYSIAN adds no tax on top of it. 70% of that 1% goes to the project, and of the 30% Pons keeps, 80% buys and burns PONS. The trade is the fairest on offer: a fixed supply with no team allocation, and the same terms for everyone from the first block. And Pons carries around two thirds of all launchpad fees on Robinhood Chain, which makes it the deepest set of buyers on the chain.
                 </p>
                 <p className="mt-3">Fairest trade, least taken, most volume. That is where a token should launch.</p>
                 <table className="mt-4 w-full text-[12.5px]">

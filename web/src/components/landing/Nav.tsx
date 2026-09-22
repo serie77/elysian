@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Wordmark } from '../ui/Mark';
 import { SectionLink } from './SectionLink';
-import { Magnetic } from '../motion/Magnetic';
 import { useReady } from '../motion/useReady';
 
 const links: { label: string; section?: string; href?: string }[] = [
@@ -43,12 +42,14 @@ export function Nav() {
         transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)',
       }}
     >
-      <SectionLink section="token" className="container-x flex h-8 items-center justify-between gap-4 border-b border-[var(--line)] bg-[var(--bg)] text-[12px] font-medium text-[var(--ink-2)] transition-colors hover:text-[var(--ink)]">
-        <span className="truncate">
-          <span className="green">$ELYSIAN</span> launches on Pons. Creator fees become buybacks.
-        </span>
-        <span className="flex-none">Read how</span>
-      </SectionLink>
+      <div className="border-b border-[var(--line)] bg-[var(--bg)]">
+        <SectionLink section="token" className="container-x flex h-8 items-center justify-between gap-4 text-[12px] font-medium text-[var(--ink-2)] transition-colors hover:text-[var(--ink)]">
+          <span className="truncate">
+            <span className="text-[var(--ink)]">$ELYSIAN</span> launches on Pons. Creator fees become buybacks.
+          </span>
+          <span className="flex-none">Read how</span>
+        </SectionLink>
+      </div>
       <div
         className="container-x flex h-16 items-center justify-between transition-colors duration-500"
         style={{
@@ -72,11 +73,9 @@ export function Nav() {
             ),
           )}
         </nav>
-        <Magnetic radius={60} strength={0.25}>
-          <Link href="/app" className="btn btn-solid h-9 px-4 text-[13px] font-medium" data-cursor="Open">
-            Launch app
-          </Link>
-        </Magnetic>
+        <Link href="/app" className="btn btn-solid h-9 px-4 text-[13px] font-medium" data-cursor="Open">
+          Launch app
+        </Link>
       </div>
     </header>
   );

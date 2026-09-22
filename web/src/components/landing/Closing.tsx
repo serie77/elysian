@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { animate, onScroll, stagger } from 'animejs';
 import { useAnime } from '../motion/useAnime';
-import { Magnetic } from '../motion/Magnetic';
 import { Redact } from '../motion/Redact';
 import { Wordmark } from '../ui/Mark';
 import { SectionLink } from './SectionLink';
@@ -33,12 +32,10 @@ export function Closing() {
       <div className="container-x flex flex-col items-start gap-10 md:flex-row md:items-end md:justify-between">
         <Redact as="h2" step={140} className="display block text-[clamp(3.4rem,11vw,10rem)]" segments={[{ t: 'Go' }, { t: 'private.', soft: true }]} />
         <div className="flex flex-col items-start gap-4 md:items-end md:pb-4">
-          <Magnetic>
-            <Link href="/app" className="btn btn-solid h-12 px-5 text-[14px] font-medium" data-cursor="Open">
-              Launch app
-              <ArrowTile />
-            </Link>
-          </Magnetic>
+          <Link href="/app" className="btn btn-solid h-12 px-5 text-[14px] font-medium" data-cursor="Open">
+            Launch app
+            <ArrowTile />
+          </Link>
           <p className="text-[14px] font-medium text-[var(--ink-3)] md:text-right">Connect. Sign once. Shield.</p>
         </div>
       </div>

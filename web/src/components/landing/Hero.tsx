@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { animate, createTimeline, onScroll, stagger, utils } from 'animejs';
+import { explorerApi } from '@/lib/explorer';
 import { useAnime } from '../motion/useAnime';
 import { useReady } from '../motion/useReady';
-import { Magnetic } from '../motion/Magnetic';
 import { Emblem } from '../motion/Emblem';
 import { Redact } from '../motion/Redact';
 import { ArrowTile } from '../ui/Glyph';
@@ -14,11 +15,18 @@ const stats = [
   { v: 200, prefix: '', suffix: '+', k: 'Tokens listed. Paste any other.' },
   { v: 2, prefix: '~', suffix: 's', k: 'To prove, in your browser' },
   { v: 60, prefix: '', suffix: 's', k: 'Sealed trade batches' },
-  { v: 0, prefix: '', suffix: '', k: 'Addresses on-chain' },
 ];
 
 export function Hero() {
   const ready = useReady();
+  // The fourth figure is live: how many shielded transactions the pool has seen, from the node's explorer.
+  const [txs, setTxs] = useState<number | null>(null);
+  useEffect(() => {
+    explorerApi
+      .summary()
+      .then((s) => setTxs(s.transactions))
+      .catch(() => setTxs(null));
+  }, []);
 
   const root = useAnime(
     (scope) => {
@@ -53,23 +61,19 @@ export function Hero() {
             segments={[{ t: 'The privacy layer' }, { t: 'for' }, { t: 'Robinhood Chain.', green: true }]}
           />
           <p className="hero-fade will-reveal mt-8 flex items-center gap-3 text-[16px] font-medium tracking-[-0.01em] text-[var(--ink)] md:text-[18px]">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--green)]" />
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--bone)]" />
             <span>
-              Buy stocks, memecoins or any token on <span className="green">Robinhood Chain</span>. Privately.
+              Buy stocks, memecoins or any token on <span className="green">Robinhood Chain</span>, and send them to anyone. Privately.
             </span>
           </p>
           <div className="hero-fade will-reveal mt-9 flex flex-wrap items-center gap-3">
-            <Magnetic>
-              <Link href="/app" className="btn btn-solid h-12 px-5 text-[14px] font-medium" data-cursor="Open">
-                Launch app
-                <ArrowTile />
-              </Link>
-            </Magnetic>
-            <Magnetic>
-              <Link href="/protocol" className="btn h-12 px-5 text-[14px] font-medium" data-cursor="Read">
-                Read the docs
-              </Link>
-            </Magnetic>
+            <Link href="/app" className="btn btn-solid h-12 px-5 text-[14px] font-medium" data-cursor="Open">
+              Launch app
+              <ArrowTile />
+            </Link>
+            <Link href="/protocol" className="btn h-12 px-5 text-[14px] font-medium" data-cursor="Read">
+              Read the docs
+            </Link>
           </div>
           <ContractAddress className="hero-fade will-reveal mt-5" />
         </div>
@@ -90,6 +94,10 @@ export function Hero() {
               <dt className="mt-2 text-[13px] font-medium tracking-[-0.005em] text-[var(--ink-3)]">{s.k}</dt>
             </div>
           ))}
+          <div className="hero-stat will-reveal border-l border-t border-[var(--line)] py-6 pl-6 md:border-t-0 md:py-8 md:pl-8">
+            <dd className="h2 tabular text-[clamp(1.9rem,3.4vw,3rem)]">{txs === null ? '–' : txs.toLocaleString('en-US')}</dd>
+            <dt className="mt-2 text-[13px] font-medium tracking-[-0.005em] text-[var(--ink-3)]">Shielded transactions so far</dt>
+          </div>
         </dl>
       </div>
     </section>

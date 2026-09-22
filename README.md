@@ -106,7 +106,7 @@ One `.env` at the repo root (copy `.env.example`) serves the contracts, the node
 
 The landing page's "Today, the chain sees everything" table shows real transfers: the browser pulls the newest ones from the mainnet RPC on load, and `npx tsx web/scripts/snapshot-transfers.mts` refreshes the frozen set it renders first. Every row links to its transaction on robin.etherscan.io.
 
-Token logos come from Simple Icons (CC0) through `node web/scripts/build-token-icons.mjs`; the ticker-to-brand map is explicit, and tickers with no open-licensed logo get a monogram tile.
+Token logos come from Simple Icons (CC0) through `node web/scripts/build-token-icons.mjs` where a brand mark exists; every other listed stock gets its company logo through `node web/scripts/fetch-stock-logos.mjs` (the nvstly/icons ticker set, then Financial Modeling Prep) into `web/public/tokens/stocks/`, and the few tickers neither source knows get a monogram tile. Company logos are trademarks of their owners, used only to identify the token.
 
 `ElysianPool` identifies assets by address (`assetId = uint160(token)`) and has no registry. Anything that is an ERC-20 on the chain can be shielded, transferred and traded, including every Robinhood stock token, USDG, WETH, and whatever address you paste into the picker. Native ETH is shielded as WETH; the Shield page wraps it for you. Tokens that take a cut on transfer are refused at shield time (`UnsupportedToken`), because the pool could not pay everyone back; rebasing tokens are not supported either.
 

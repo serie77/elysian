@@ -231,12 +231,14 @@ textarea::placeholder {
   white-space: nowrap;
 }
 
+/* Hover lifts the button a touch; nothing slides, stretches or follows the pointer. */
 .btn:hover {
   border-color: var(--bone-2);
+  transform: translateY(-1px);
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
 .btn-solid {
@@ -245,28 +247,8 @@ textarea::placeholder {
   border-color: var(--bone);
 }
 
-.btn-solid {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* Hover pours white across the button from the left. */
-.btn-solid::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  background: #fff;
-  transform: translateX(-101%);
-  transition: transform 0.6s var(--ease-out);
-}
-
-.btn-solid:hover::before {
-  transform: translateX(0);
-}
-
 .btn-solid:hover {
+  background: #fff;
   border-color: #fff;
 }
 
@@ -511,10 +493,6 @@ html.has-cursor.landing * {
   background: var(--bg);
   color: var(--bone);
   transition: transform 0.4s var(--ease-out);
-}
-
-.btn:hover .arrow-tile {
-  transform: translate(2px, -2px);
 }
 
 .btn:not(.btn-solid) .arrow-tile {

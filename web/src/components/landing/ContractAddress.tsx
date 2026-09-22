@@ -23,7 +23,7 @@ export function ContractAddress({ className = '' }: { className?: string }) {
       data-cursor={TOKEN_CA ? 'Copy' : undefined}
       aria-label={TOKEN_CA ? 'Copy contract address' : 'Contract address, not announced yet'}
     >
-      <span className="mono text-[11px] tracking-[0.16em] text-[var(--green)]">CA</span>
+      <span className="mono text-[11px] tracking-[0.16em] text-[var(--ink-3)]">CA</span>
       <span className="mono min-w-0 flex-1 truncate text-[13px] text-[var(--ink)]">
         {TOKEN_CA ? (
           <>
