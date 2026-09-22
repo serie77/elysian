@@ -125,7 +125,7 @@ Rounding dust (`Σ remainder / totalIn` per batch, at most one unit per claim) s
 | | Public | Private |
 | --- | --- | --- |
 | Shield | asset, amount, depositor address | owner |
-| Transfer | asset, 2 nullifiers, 2 commitments, 2 ciphertexts | everything else |
+| Transfer | asset, 2 nullifiers, 2 commitments, 2 ciphertexts, relay fee (flat per asset) | everything else |
 | Unshield | asset, amount, recipient, relayer, fee | spent notes |
 | Intent | pair, amountIn, batch, commitment, ciphertext | owner |
 | Claim | batch, pair, nullifier, output commitment | which intent, when the batch held more than one order |

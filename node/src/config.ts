@@ -51,8 +51,11 @@ export const config = {
   logRange: Number(process.env.LOG_RANGE ?? 5000),
   relayerKey: process.env.RELAYER_KEY as `0x${string}` | undefined,
   executorKey: process.env.EXECUTOR_KEY as `0x${string}` | undefined,
-  /** Minimum relay fee in basis points of the unshielded amount. */
+  /** Relay fee: a share (basis points) of any amount leaving the pool, plus a flat minimum on every relayed transaction. */
   relayFeeBps: Number(process.env.RELAY_FEE_BPS ?? 10),
+  /** The flat minimum, in USDG, converted into the asset being moved by the venue's quote. */
+  relayMinFeeUsd: Number(process.env.RELAY_MIN_FEE_USD ?? 0.3),
+  usdg: (process.env.USDG_ADDRESS ?? dep?.tokens?.USDG ?? (chainId === 4663 ? '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168' : undefined)) as `0x${string}` | undefined,
   slippageBps: Number(process.env.SLIPPAGE_BPS ?? 50),
 };
 

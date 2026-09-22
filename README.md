@@ -123,7 +123,7 @@ Not reachable yet: tokens whose only liquidity is on Uniswap v4, Ramses, or stil
 | Action | Public | Private |
 | --- | --- | --- |
 | Shield | asset, amount in, depositor | note owner, blinding |
-| Transfer | asset, two nullifiers, two commitments | sender, recipient, amounts, memo |
+| Transfer | asset, two nullifiers, two commitments, flat relay fee | sender, recipient, amounts, memo |
 | Unshield | asset, amount out, recipient, relayer fee | which notes were spent |
 | Swap intent | pair, size, batch | owner |
 | Batch clear | totals, clearing ratio | who was in the batch |

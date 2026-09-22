@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { usePublicClient, useWriteContract } from 'wagmi';
 import { isAddress as isEvmAddress } from 'viem';
@@ -52,8 +52,25 @@ function Send() {
   const relayer = w.sync.state?.relayer ?? null;
   // The relayer is the default. Sending from the connected wallet is a deliberate choice, never a fallback.
   const useRelay = !direct;
-  const relayReady = !useRelay || Boolean(relayer);
   const feeBps = useRelay && mode === 'unshield' ? BigInt(w.sync.state?.relayFeeBps ?? 0) : 0n;
+  // The relay's flat minimum for this asset. It is the same for every transfer of the asset, so it says nothing about the amount.
+  const [flat, setFlat] = useState<bigint | null>(null);
+  const [feeError, setFeeError] = useState(false);
+  const assetAddress = selected?.address;
+  useEffect(() => {
+    setFlat(null);
+    setFeeError(false);
+    if (!useRelay || !assetAddress) return;
+    let live = true;
+    nodeApi
+      .relayFee(assetAddress)
+      .then((f) => live && setFlat(BigInt(f.flat)))
+      .catch(() => live && setFeeError(true));
+    return () => {
+      live = false;
+    };
+  }, [useRelay, assetAddress]);
+  const relayReady = !useRelay || (Boolean(relayer) && flat !== null);
 
   const parsed = useMemo(() => {
     try {
@@ -62,7 +79,8 @@ function Send() {
       return null;
     }
   }, [amount, selected]);
-  const fee = parsed ? (parsed * feeBps) / 10_000n : 0n;
+  const share = parsed ? (parsed * feeBps) / 10_000n : 0n;
+  const fee = useRelay ? (share > (flat ?? 0n) ? share : (flat ?? 0n)) : 0n;
 
   const validTo = mode === 'transfer' ? isElysianAddress(to) : isEvmAddress(to);
   const canSubmit = Boolean(selected && parsed && parsed > 0n && parsed + fee <= balance && validTo && relayReady && !busy);
@@ -138,8 +156,11 @@ function Send() {
             max={selected ? formatAmount(balance, selected.decimals) : undefined}
             onMax={() => {
               if (!selected) return;
-              // The fee is a share of the amount, so the most that fits is balance / (1 + rate), not balance minus the current fee.
-              setAmount(formatAmount((balance * 10_000n) / (10_000n + feeBps), selected.decimals, 18).replace(/,/g, ''));
+              // The most that fits: amount + max(share, flat minimum) <= balance.
+              const byShare = (balance * 10_000n) / (10_000n + feeBps);
+              const byFlat = balance - (flat ?? 0n);
+              const most = byShare < byFlat ? byShare : byFlat;
+              setAmount(formatAmount(most > 0n ? most : 0n, selected.decimals, 18).replace(/,/g, ''));
             }}
           />
           <label className="field">
@@ -161,6 +182,7 @@ function Send() {
           </label>
           <Progress p={progress} ms={ms} />
           {useRelay && !relayer && w.sync.state ? <Notice kind="error">The relayer is offline, so this cannot be sent privately right now. Try again shortly.</Notice> : null}
+          {useRelay && relayer && feeError ? <Notice kind="error">The relay fee could not be loaded, so this cannot be sent privately right now. Try again shortly.</Notice> : null}
           {error ? <Notice kind="error">{error}</Notice> : null}
           {hash ? (
             <Notice kind="ok">

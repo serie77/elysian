@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { decodeAbiParameters, parseAbiParameters, type Hex } from 'viem';
 import { FIELD_SIZE } from '@elysian/core';
-import { poolAbi, swapAbi } from './abi.js';
+import { dexAbi, erc20Abi, poolAbi, swapAbi } from './abi.js';
 import { publicClient, relayer } from './chain.js';
 import { config } from './config.js';
 import { q, type BatchRow, type CommitmentRow, type SwapRow } from './db.js';
@@ -40,6 +40,7 @@ export async function startServer() {
       swapLeaves: s.swapLeaves,
       relayer: relayer?.account.address ?? null,
       relayFeeBps: config.relayFeeBps,
+      relayMinFeeUsd: config.relayMinFeeUsd,
       tokens: config.tokens,
       counts,
     };
@@ -130,6 +131,35 @@ export async function startServer() {
     };
   }
 
+  // Every relayed transaction pays at least a flat minimum (RELAY_MIN_FEE_USD in the asset being moved), and anything
+  // leaving the pool pays a share on top. The flat part is the same for every transfer of an asset, so a transfer's
+  // fee says nothing about its size. Priced by the venue's quote and cached for a minute; an asset the venue cannot
+  // price pays the share alone.
+  const flatFees = new Map<string, { at: number; fee: bigint }>();
+  let usdgDecimals: number | undefined;
+  async function flatFee(asset: Hex): Promise<bigint> {
+    const key = asset.toLowerCase();
+    const hit = flatFees.get(key);
+    if (hit && Date.now() - hit.at < 60_000) return hit.fee;
+    let fee = 0n;
+    if (config.usdg && config.relayMinFeeUsd > 0) {
+      usdgDecimals ??= Number(await publicClient.readContract({ address: config.usdg, abi: erc20Abi, functionName: 'decimals' }));
+      const usd = BigInt(Math.round(config.relayMinFeeUsd * 10 ** usdgDecimals));
+      if (key === config.usdg.toLowerCase()) fee = usd;
+      else {
+        try {
+          fee = await publicClient.readContract({ address: config.dex, abi: dexAbi, functionName: 'quote', args: [config.usdg, asset, usd] });
+        } catch {
+          fee = 0n;
+        }
+      }
+    }
+    flatFees.set(key, { at: Date.now(), fee });
+    return fee;
+  }
+
+  app.get<{ Params: { asset: string } }>('/relay/fee/:asset', async (req) => ({ bps: config.relayFeeBps, flat: (await flatFee(req.params.asset as Hex)).toString() }));
+
   app.post<{ Body: RelayBody }>('/relay', async (req, reply) => {
     if (!relayer) return reply.code(503).send({ error: 'relaying is not enabled on this node' });
     const { args, extData } = req.body;
@@ -140,7 +170,9 @@ export async function startServer() {
     }
     if (extAmount > 0n) return reply.code(400).send({ error: 'shielding must be sent by the depositor' });
     const moved = extAmount < 0n ? -extAmount : 0n;
-    const minFee = (moved * BigInt(config.relayFeeBps)) / 10_000n;
+    const share = (moved * BigInt(config.relayFeeBps)) / 10_000n;
+    const flat = await flatFee(`0x${BigInt(args.assetId).toString(16).padStart(40, '0')}`);
+    const minFee = share > flat ? share : flat;
     if (fee < minFee) return reply.code(400).send({ error: 'fee below the relay minimum', minFee: minFee.toString() });
 
     const proofArgs = {

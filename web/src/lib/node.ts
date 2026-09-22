@@ -18,6 +18,7 @@ export interface NodeState {
   swapLeaves: number;
   relayer: `0x${string}` | null;
   relayFeeBps: number;
+  relayMinFeeUsd?: number;
   tokens: Record<string, `0x${string}`>;
   counts: { commitments: number; nullifiers: number; swaps: number; batches: number };
 }
@@ -116,6 +117,8 @@ export const nodeApi = {
   batches: (assetIn?: string, assetOut?: string) =>
     get<{ rows: BatchRow[] }>(assetIn && assetOut ? `/batches?assetIn=${assetIn}&assetOut=${assetOut}` : '/batches?limit=40'),
   activity: (limit = 40) => get<{ rows: ActivityRow[] }>(`/activity?limit=${limit}`),
+  /** The relay's fee schedule for an asset: a share of amounts leaving the pool, and a flat minimum on every transaction. */
+  relayFee: (asset: string) => get<{ bps: number; flat: string }>(`/relay/fee/${asset}`),
   relay: (body: unknown) => post<{ hash: `0x${string}` }>('/relay', body),
   claim: (body: unknown) => post<{ hash: `0x${string}` }>('/claim', body),
 };

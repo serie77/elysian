@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import { ethers, network } from 'hardhat';
 import type { Contract, Signer } from 'ethers';
+import type * as Core from '@elysian/core';
 import { deployHasher, hex, loadCore, prove, unhex, type CoreModule, domainOf } from './helpers';
 
 const LEVELS = 20;
@@ -151,8 +152,8 @@ describe('Elysian · edge cases', function () {
     const addr = await token.getAddress();
     await client.sync();
     const tx = await build(client, { key, asset: addr, inputs: [], outputs: [{ note: core.createNote(addr, amount, key.pk), to: key.address() }], extAmount: amount });
-    await token.connect(from).approve(await env.pool.getAddress(), amount);
-    await env.pool.connect(from).transact(tx.args, tx.extSol);
+    await (token.connect(from) as Contract).approve(await env.pool.getAddress(), amount);
+    await (env.pool.connect(from) as Contract).transact(tx.args, tx.extSol);
     await client.sync();
   }
 
@@ -193,7 +194,7 @@ describe('Elysian · edge cases', function () {
       extAmount: -(50n * E18),
       recipient: bobAddr,
     });
-    await pool.connect(alice).transact(tx.args, tx.extSol);
+    await (pool.connect(alice) as Contract).transact(tx.args, tx.extSol);
     expect(await nvda.balanceOf(bobAddr)).to.equal(1_050n * E18);
     await client.sync();
     expect(client.balance(key, id)).to.equal(15n * E18);
@@ -263,8 +264,8 @@ describe('Elysian · edge cases', function () {
     };
     const ext = { recipient: ZERO, extAmount: 0n, relayer: ZERO, fee: 0n, encryptedOutput1: '0x', encryptedOutput2: '0x', adapterData: '0x' };
     await expect(pool.transact(args, ext)).to.be.revertedWithCustomError(pool, 'InvalidAsset');
-    await expect(pool.connect(bob).insertFromAdapter(core.toHex32(5n), '0x')).to.be.revertedWithCustomError(pool, 'NotAdapter');
-    await expect(pool.connect(bob).setAdapter(await bob.getAddress(), true)).to.be.revertedWithCustomError(pool, 'OwnableUnauthorizedAccount');
+    await expect((pool.connect(bob) as Contract).insertFromAdapter(core.toHex32(5n), '0x')).to.be.revertedWithCustomError(pool, 'NotAdapter');
+    await expect((pool.connect(bob) as Contract).setAdapter(await bob.getAddress(), true)).to.be.revertedWithCustomError(pool, 'OwnableUnauthorizedAccount');
   });
 
   it('forgets roots older than the history window', async () => {
@@ -335,7 +336,7 @@ describe('Elysian · edge cases', function () {
         recipient: await swap.getAddress(),
         adapterData: core.encodeSwapAdapterData(assetOut as `0x${string}`, core.swapOwnerTag(s), batchId, core.encryptTo(key.encPub, core.serializeSwap(s))),
       });
-      await pool.connect(from).transact(tx.args, tx.extSol);
+      await (pool.connect(from) as Contract).transact(tx.args, tx.extSol);
       await client.sync();
       return s;
     };
@@ -350,8 +351,8 @@ describe('Elysian · edge cases', function () {
 
     await closeBatch();
     const q = await dex.quote(nvdaAddr, usdgAddr, 30n * E18);
-    await swap.connect(executor).executeBatch(nvdaAddr, usdgAddr, batchId, q);
-    await swap.connect(executor).executeBatch(usdgAddr, nvdaAddr, batchId, 0);
+    await (swap.connect(executor) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId, q);
+    await (swap.connect(executor) as Contract).executeBatch(usdgAddr, nvdaAddr, batchId, 0);
     const f = await swap.getBatch(nvdaAddr, usdgAddr, batchId);
     const b = await swap.getBatch(usdgAddr, nvdaAddr, batchId);
     expect(f.executed && b.executed).to.equal(true);
@@ -412,23 +413,23 @@ describe('Elysian · edge cases', function () {
     };
 
     let tx = await intentTx(nvdaAddr, batchId);
-    await expect(pool.connect(alice).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(swap, 'SameAsset');
+    await expect((pool.connect(alice) as Contract).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(swap, 'SameAsset');
     tx = await intentTx(usdgAddr, batchId - 1n);
-    await expect(pool.connect(alice).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(swap, 'BadBatch');
+    await expect((pool.connect(alice) as Contract).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(swap, 'BadBatch');
     tx = await intentTx(usdgAddr, batchId + 2n);
-    await expect(pool.connect(alice).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(swap, 'BadBatch');
+    await expect((pool.connect(alice) as Contract).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(swap, 'BadBatch');
     // Next batch is allowed (submitting near a boundary).
     tx = await intentTx(usdgAddr, batchId + 1n);
-    await pool.connect(alice).transact(tx.args, tx.extSol);
+    await (pool.connect(alice) as Contract).transact(tx.args, tx.extSol);
     await client.sync();
 
     await closeBatch();
     // batchId itself is closed but empty; batchId+1 holds the intent and is now closed too after another step.
-    await expect(swap.connect(executor).executeBatch(nvdaAddr, usdgAddr, batchId, 0)).to.be.revertedWithCustomError(swap, 'BatchEmpty');
-    await expect(swap.connect(executor).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'BatchNotClosed');
+    await expect((swap.connect(executor) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId, 0)).to.be.revertedWithCustomError(swap, 'BatchEmpty');
+    await expect((swap.connect(executor) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'BatchNotClosed');
     await closeBatch();
     // A stranger cannot execute inside the grace period.
-    await expect(swap.connect(bob).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'NotExecutor');
+    await expect((swap.connect(bob) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'NotExecutor');
     // A claim before execution is refused.
     await client.sync();
     const owned = core.scanSwaps(key, client.swaps)[0];
@@ -459,13 +460,13 @@ describe('Elysian · edge cases', function () {
     // After the grace period a stranger still cannot execute (they would choose the slippage), but anyone can cancel.
     await network.provider.send('evm_increaseTime', [3601]);
     await network.provider.send('evm_mine');
-    await expect(swap.connect(bob).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'NotExecutor');
+    await expect((swap.connect(bob) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'NotExecutor');
     const nvdaId = core.assetToId(nvdaAddr);
     const heldBefore: bigint = await nvda.balanceOf(await pool.getAddress());
-    await expect(swap.connect(bob).cancelBatch(nvdaAddr, usdgAddr, batchId + 1n)).to.emit(swap, 'BatchCancelled');
+    await expect((swap.connect(bob) as Contract).cancelBatch(nvdaAddr, usdgAddr, batchId + 1n)).to.emit(swap, 'BatchCancelled');
     expect((await nvda.balanceOf(await pool.getAddress())) - heldBefore).to.equal(5n * E18);
-    await expect(swap.connect(executor).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'BatchAlreadyExecuted');
-    await expect(swap.connect(bob).cancelBatch(nvdaAddr, usdgAddr, batchId + 1n)).to.be.revertedWithCustomError(swap, 'BatchAlreadyExecuted');
+    await expect((swap.connect(executor) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId + 1n, 0)).to.be.revertedWithCustomError(swap, 'BatchAlreadyExecuted');
+    await expect((swap.connect(bob) as Contract).cancelBatch(nvdaAddr, usdgAddr, batchId + 1n)).to.be.revertedWithCustomError(swap, 'BatchAlreadyExecuted');
     // The proof above was made against fabricated totals, so it does not verify.
     await expect(swap.claim(claimArgs)).to.be.revertedWithCustomError(swap, 'InvalidClaimProof');
 
@@ -475,18 +476,18 @@ describe('Elysian · edge cases', function () {
     const good = { ...claimArgs, proof: core.encodeProof(p0.proof), nullifier: core.toHex32(r0.nullifier), outputCommitment: core.toHex32(r0.outputCommitment), encryptedOutput: hex(r0.encryptedOutput) };
     const tampered = Buffer.from(r0.encryptedOutput);
     tampered[tampered.length - 1] ^= 1;
-    await expect(swap.connect(bob).claim({ ...good, encryptedOutput: hex(new Uint8Array(tampered)) })).to.be.revertedWithCustomError(swap, 'InvalidClaimProof');
-    await expect(swap.connect(bob).claim({ ...good, encryptedOutput: '0x' })).to.be.revertedWithCustomError(swap, 'InvalidClaimProof');
+    await expect((swap.connect(bob) as Contract).claim({ ...good, encryptedOutput: hex(new Uint8Array(tampered)) })).to.be.revertedWithCustomError(swap, 'InvalidClaimProof');
+    await expect((swap.connect(bob) as Contract).claim({ ...good, encryptedOutput: '0x' })).to.be.revertedWithCustomError(swap, 'InvalidClaimProof');
     // A proof made for another chain or another swap contract is refused here.
     const elsewhere = core.buildSwapClaimWitness({ key, domain: { chainId: 4663, contract: await swap.getAddress() as `0x${string}` }, encPub: key.encPub, swap: owned, path: client.swapTree.path(owned.leafIndex), totalIn: 5n * E18, totalOut: 5n * E18, outBlinding: core.randomField(), refunded: true });
     const pe = await prove('swapClaim', elsewhere.circuitInputs);
-    await expect(swap.connect(bob).claim({ ...good, proof: core.encodeProof(pe.proof), nullifier: core.toHex32(elsewhere.nullifier), outputCommitment: core.toHex32(elsewhere.outputCommitment), encryptedOutput: hex(elsewhere.encryptedOutput) })).to.be.revertedWithCustomError(swap, 'InvalidClaimProof');
+    await expect((swap.connect(bob) as Contract).claim({ ...good, proof: core.encodeProof(pe.proof), nullifier: core.toHex32(elsewhere.nullifier), outputCommitment: core.toHex32(elsewhere.outputCommitment), encryptedOutput: hex(elsewhere.encryptedOutput) })).to.be.revertedWithCustomError(swap, 'InvalidClaimProof');
 
     // The refund: the order comes back as a note of the asset it sold, one for one.
     const before = client.balance(key, nvdaId);
     const r = core.buildSwapClaimWitness({ key, domain: await domainOf(swap), encPub: key.encPub, swap: owned, path: client.swapTree.path(owned.leafIndex), totalIn: 5n * E18, totalOut: 5n * E18, outBlinding: core.randomField(), refunded: true });
     const refundProof = await prove('swapClaim', r.circuitInputs);
-    await swap.connect(bob).claim({ ...claimArgs, proof: core.encodeProof(refundProof.proof), nullifier: core.toHex32(r.nullifier), outputCommitment: core.toHex32(r.outputCommitment), encryptedOutput: hex(r.encryptedOutput) });
+    await (swap.connect(bob) as Contract).claim({ ...claimArgs, proof: core.encodeProof(refundProof.proof), nullifier: core.toHex32(r.nullifier), outputCommitment: core.toHex32(r.outputCommitment), encryptedOutput: hex(r.encryptedOutput) });
     await client.sync();
     expect(client.balance(key, nvdaId) - before).to.equal(5n * E18);
 
@@ -500,6 +501,6 @@ describe('Elysian · edge cases', function () {
     await pool.setAdapter(await bob.getAddress(), false);
     await expect(swap.setDex()).to.be.revertedWithCustomError(swap, 'DexNotReady');
     // Only the pool may deliver intents.
-    await expect(swap.connect(bob).onShieldedTransfer(nvdaAddr, 1n, '0x')).to.be.revertedWithCustomError(swap, 'OnlyPool');
+    await expect((swap.connect(bob) as Contract).onShieldedTransfer(nvdaAddr, 1n, '0x')).to.be.revertedWithCustomError(swap, 'OnlyPool');
   });
 });

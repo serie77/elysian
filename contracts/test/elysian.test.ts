@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { ethers, network } from 'hardhat';
 import type { Contract, Signer } from 'ethers';
+import type * as Core from '@elysian/core';
 import { artifactsAvailable, deployHasher, hex, loadCore, prove, unhex, type CoreModule, domainOf } from './helpers';
 
 const LEVELS = 20;
@@ -240,8 +241,8 @@ describe('Elysian', function () {
       outputRecipients: [aliceKey.address()],
       extAmount: 100n * E18,
     });
-    await nvda.connect(alice).approve(poolAddr, 100n * E18);
-    await expect(pool.connect(alice).transact(tx.args, tx.extSol)).to.emit(pool, 'Shielded');
+    await (nvda.connect(alice) as Contract).approve(poolAddr, 100n * E18);
+    await expect((pool.connect(alice) as Contract).transact(tx.args, tx.extSol)).to.emit(pool, 'Shielded');
     expect(await nvda.balanceOf(poolAddr)).to.equal(100n * E18);
 
     await client.sync();
@@ -263,14 +264,14 @@ describe('Elysian', function () {
       extAmount: 0n,
     });
     // Anyone can submit: the relayer pays gas and learns nothing but the asset.
-    await expect(pool.connect(relayer).transact(tx.args, tx.extSol)).to.emit(pool, 'NewNullifier');
+    await expect((pool.connect(relayer) as Contract).transact(tx.args, tx.extSol)).to.emit(pool, 'NewNullifier');
     await client.sync();
     expect(client.balance(aliceKey, nvdaId)).to.equal(70n * E18);
     expect(client.balance(bobKey, nvdaId)).to.equal(30n * E18);
     expect(await nvda.balanceOf(poolAddr)).to.equal(100n * E18);
 
     // -- replaying the same proof must fail on the spent nullifier
-    await expect(pool.connect(relayer).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(pool, 'NullifierSpent');
+    await expect((pool.connect(relayer) as Contract).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(pool, 'NullifierSpent');
 
     // -- bob unshields 30 NVDA to his EOA through the relayer, paying 1 NVDA fee
     const [bobNote] = client.notes(bobKey);
@@ -287,7 +288,7 @@ describe('Elysian', function () {
       relayer: relayerAddr,
       fee: 1n * E18,
     });
-    await expect(pool.connect(relayer).transact(tx.args, tx.extSol)).to.emit(pool, 'Unshielded');
+    await expect((pool.connect(relayer) as Contract).transact(tx.args, tx.extSol)).to.emit(pool, 'Unshielded');
     expect(await nvda.balanceOf(bobAddr)).to.equal(29n * E18);
     expect(await nvda.balanceOf(relayerAddr)).to.equal(1n * E18);
     expect(await nvda.balanceOf(poolAddr)).to.equal(70n * E18);
@@ -322,8 +323,8 @@ describe('Elysian', function () {
       outputRecipients: [key.address()],
       extAmount: 10n * E18,
     });
-    await nvda.connect(alice).approve(await pool.getAddress(), 10n * E18);
-    await pool.connect(alice).transact(tx.args, tx.extSol);
+    await (nvda.connect(alice) as Contract).approve(await pool.getAddress(), 10n * E18);
+    await (pool.connect(alice) as Contract).transact(tx.args, tx.extSol);
     await client.sync();
 
     const bobAddr = await bob.getAddress();
@@ -338,7 +339,7 @@ describe('Elysian', function () {
       extAmount: -(10n * E18),
       recipient: bobAddr,
     });
-    await expect(pool.connect(alice).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(nvda, 'Blocked');
+    await expect((pool.connect(alice) as Contract).transact(tx.args, tx.extSol)).to.be.revertedWithCustomError(nvda, 'Blocked');
   });
 
   it('sealed batch swap: intent, execution, claim, unshield', async () => {
@@ -363,8 +364,8 @@ describe('Elysian', function () {
       outputRecipients: [key.address()],
       extAmount: 100n * E18,
     });
-    await nvda.connect(alice).approve(poolAddr, 100n * E18);
-    await pool.connect(alice).transact(tx.args, tx.extSol);
+    await (nvda.connect(alice) as Contract).approve(poolAddr, 100n * E18);
+    await (pool.connect(alice) as Contract).transact(tx.args, tx.extSol);
     await client.sync();
 
     // swap intent: 10 NVDA -> USDG. Pin the chain to the start of a fresh batch so the
@@ -396,19 +397,19 @@ describe('Elysian', function () {
       recipient: swapAddr,
       adapterData: core.encodeSwapAdapterData(usdgAddr as `0x${string}`, core.swapOwnerTag(intent), batchId, ciphertext),
     });
-    await expect(pool.connect(alice).transact(tx.args, tx.extSol)).to.emit(swap, 'SwapIntent');
+    await expect((pool.connect(alice) as Contract).transact(tx.args, tx.extSol)).to.emit(swap, 'SwapIntent');
     expect(await nvda.balanceOf(swapAddr)).to.equal(10n * E18);
     const batchBefore = await swap.getBatch(nvdaAddr, usdgAddr, batchId);
     expect(batchBefore.totalIn).to.equal(10n * E18);
 
     // cannot execute an open batch
-    await expect(swap.connect(executor).executeBatch(nvdaAddr, usdgAddr, batchId, 0)).to.be.revertedWithCustomError(swap, 'BatchNotClosed');
+    await expect((swap.connect(executor) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId, 0)).to.be.revertedWithCustomError(swap, 'BatchNotClosed');
 
     // close the batch and clear it
     await network.provider.send('evm_increaseTime', [Number(BATCH) + 1]);
     await network.provider.send('evm_mine');
     const expectedOut: bigint = await dex.quote(nvdaAddr, usdgAddr, 10n * E18);
-    await expect(swap.connect(executor).executeBatch(nvdaAddr, usdgAddr, batchId, expectedOut)).to.emit(swap, 'BatchExecuted');
+    await expect((swap.connect(executor) as Contract).executeBatch(nvdaAddr, usdgAddr, batchId, expectedOut)).to.emit(swap, 'BatchExecuted');
     const batch = await swap.getBatch(nvdaAddr, usdgAddr, batchId);
     expect(batch.executed).to.equal(true);
     expect(batch.totalOut).to.equal(expectedOut);
@@ -436,8 +437,8 @@ describe('Elysian', function () {
       outputCommitment: core.toHex32(witness.outputCommitment),
       encryptedOutput: hex(witness.encryptedOutput),
     };
-    await expect(swap.connect(bob).claim(claimArgs)).to.emit(pool, 'NewCommitment');
-    await expect(swap.connect(bob).claim(claimArgs)).to.be.revertedWithCustomError(swap, 'SwapAlreadyClaimed');
+    await expect((swap.connect(bob) as Contract).claim(claimArgs)).to.emit(pool, 'NewCommitment');
+    await expect((swap.connect(bob) as Contract).claim(claimArgs)).to.be.revertedWithCustomError(swap, 'SwapAlreadyClaimed');
 
     await client.sync();
     expect(client.balance(key, usdgId)).to.equal(expectedOut);
@@ -455,7 +456,7 @@ describe('Elysian', function () {
       extAmount: -usdgNote.amount,
       recipient: bobAddr,
     });
-    await pool.connect(bob).transact(tx.args, tx.extSol);
+    await (pool.connect(bob) as Contract).transact(tx.args, tx.extSol);
     expect(await usdg.balanceOf(bobAddr)).to.equal(expectedOut);
   });
 });

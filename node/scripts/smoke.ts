@@ -153,15 +153,16 @@ async function main() {
   let notes = await syncWallet(alice, tree);
   log(`alice shielded balance ${notes.reduce((a, n) => a + n.amount, 0n) / E18} NVDA (indexed by node)`);
 
-  // 2. relayed private transfer 30 NVDA to bob
+  // 2. relayed private transfer 30 NVDA to bob; the relay's flat minimum comes out of alice's change
   console.log('2. private transfer via /relay');
-  tx = await build(alice, tree, NVDA, [notes[0]], [{ note: createNote(NVDA, 30n * E18, bob.pk), to: bob.address() }, { note: createNote(NVDA, 70n * E18, alice.pk), to: alice.address() }], { extAmount: 0n, relayer: state.relayer, fee: 0n });
+  const flat = BigInt((await get<{ flat: string }>(`/relay/fee/${NVDA}`)).flat);
+  tx = await build(alice, tree, NVDA, [notes[0]], [{ note: createNote(NVDA, 30n * E18, bob.pk), to: bob.address() }, { note: createNote(NVDA, 70n * E18 - flat, alice.pk), to: alice.address() }], { extAmount: 0n, relayer: state.relayer, fee: flat });
   const r1 = await post<{ hash: `0x${string}` }>('/relay', tx);
   await pub.waitForTransactionReceipt({ hash: r1.hash });
   await waitForLeaves(leaves0 + 4);
   const bobNotes = await syncWallet(bob, tree);
   notes = await syncWallet(alice, tree);
-  log(`bob ${bobNotes.reduce((a, n) => a + n.amount, 0n) / E18} NVDA, alice ${notes.reduce((a, n) => a + n.amount, 0n) / E18} NVDA`);
+  log(`bob ${bobNotes.reduce((a, n) => a + n.amount, 0n) / E18} NVDA, alice ${Number(notes.reduce((a, n) => a + n.amount, 0n)) / Number(E18)} NVDA (flat relay fee ${Number(flat) / Number(E18)})`);
 
   // 2b. the relayer refuses what it should refuse
   console.log('2b. relay rejections');
@@ -182,7 +183,8 @@ async function main() {
   // 3. bob unshields 30 NVDA to a fresh address through the relayer, paying the minimum fee
   console.log('3. relayed unshield with fee');
   const recipient = REAL ? account.address : '0x00000000000000000000000000000000000000aa';
-  const fee = (30n * E18 * BigInt(state.relayFeeBps)) / 10_000n;
+  const share = (30n * E18 * BigInt(state.relayFeeBps)) / 10_000n;
+  const fee = share > flat ? share : flat;
   tx = await build(bob, tree, NVDA, [bobNotes[0]], [], { extAmount: -(30n * E18 - fee), recipient, relayer: state.relayer, fee });
   const r2 = await post<{ hash: `0x${string}` }>('/relay', tx);
   await pub.waitForTransactionReceipt({ hash: r2.hash });

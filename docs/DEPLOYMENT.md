@@ -44,7 +44,9 @@ npm start
 | `RPC_URL` | optional override of the RPC for the chosen deployment |
 | `RELAYER_KEY` | optional; enables `/relay` and `/claim` |
 | `EXECUTOR_KEY` | optional; enables batch execution (must be registered on `ElysianSwap`) |
-| `RELAY_FEE_BPS` | minimum fee on relayed unshields, default 10 |
+| `RELAY_FEE_BPS` | relay fee as a share of any amount leaving the pool (unshields, orders), default 10 |
+| `RELAY_MIN_FEE_USD` | flat minimum on every relayed transaction, in USDG, converted into the asset by the venue quote; default 0.30, about one transaction's gas |
+| `USDG_ADDRESS` | the USDG the flat fee is priced in; defaults to the deployment's USDG (Robinhood Chain mainnet built in) |
 | `SLIPPAGE_BPS` | executor slippage bound when the venue exposes `quote`, default 50 |
 | `LOG_RANGE` | blocks per `getLogs` call, default 5000 |
 

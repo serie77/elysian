@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { usePublicClient, useReadContract, useWriteContract } from 'wagmi';
 import type { OwnedSwap } from '@elysian/core';
@@ -65,8 +65,25 @@ function Trade() {
   const balance = w.balances.find((b) => inA && b.asset === BigInt(inA.address))?.amount ?? 0n;
   const relayer = w.sync.state?.relayer ?? null;
   const useRelay = !direct;
-  const relayReady = !useRelay || Boolean(relayer);
   const feeBps = useRelay ? BigInt(w.sync.state?.relayFeeBps ?? 0) : 0n;
+  // The relay's flat minimum for the asset being sold.
+  const [flat, setFlat] = useState<bigint | null>(null);
+  const [feeError, setFeeError] = useState(false);
+  const assetAddress = inA?.address;
+  useEffect(() => {
+    setFlat(null);
+    setFeeError(false);
+    if (!useRelay || !assetAddress) return;
+    let live = true;
+    nodeApi
+      .relayFee(assetAddress)
+      .then((f) => live && setFlat(BigInt(f.flat)))
+      .catch(() => live && setFeeError(true));
+    return () => {
+      live = false;
+    };
+  }, [useRelay, assetAddress]);
+  const relayReady = !useRelay || (Boolean(relayer) && flat !== null);
 
   const parsed = useMemo(() => {
     try {
@@ -75,7 +92,8 @@ function Trade() {
       return null;
     }
   }, [amount, inA]);
-  const fee = parsed ? (parsed * feeBps) / 10_000n : 0n;
+  const share = parsed ? (parsed * feeBps) / 10_000n : 0n;
+  const fee = useRelay ? (share > (flat ?? 0n) ? share : (flat ?? 0n)) : 0n;
 
   const duration = dep.batchDuration;
   const now = useChainClock();
@@ -146,12 +164,19 @@ function Trade() {
             onChange={setAmount}
             symbol={inA?.symbol}
             max={inA ? formatAmount(balance, inA.decimals) : undefined}
-            // The fee is a share of the amount, so the most that fits is balance / (1 + rate).
-            onMax={() => inA && setAmount(formatAmount((balance * 10_000n) / (10_000n + feeBps), inA.decimals, 18).replace(/,/g, ''))}
+            // The most that fits: amount + max(share, flat minimum) <= balance.
+            onMax={() => {
+              if (!inA) return;
+              const byShare = (balance * 10_000n) / (10_000n + feeBps);
+              const byFlat = balance - (flat ?? 0n);
+              const most = byShare < byFlat ? byShare : byFlat;
+              setAmount(formatAmount(most > 0n ? most : 0n, inA.decimals, 18).replace(/,/g, ''));
+            }}
           />
           <DirectToggle direct={direct} onChange={setDirect} />
           <Progress p={progress} ms={ms} />
           {useRelay && !relayer && w.sync.state ? <Notice kind="error">{RELAY_DOWN}</Notice> : null}
+          {useRelay && relayer && feeError ? <Notice kind="error">The relay fee could not be loaded, so this cannot be sent privately right now. Try again shortly.</Notice> : null}
           {error ? <Notice kind="error">{error}</Notice> : null}
           {hash ? (
             <Notice kind="ok">
