@@ -1,0 +1,44 @@
+{
+  "version": "v1",
+  "deployedOn": "2026-09-21",
+  "chainId": 4663,
+  "note": "Artifacts that prove against the v1 mainnet pool. Keep as long as that pool holds funds.",
+  "files": {
+    "deployment.json": {
+      "bytes": 521,
+      "sha256": "53318dea972b005a2db2da322175175f766d0150b077744a00b78f22d2d4e7d6"
+    },
+    "swapClaim.vkey.json": {
+      "bytes": 4723,
+      "sha256": "f0ee077845c483897475a62f4e6ff249484e8f6cd4036c2233a3c0737d09de50"
+    },
+    "swapClaim.wasm": {
+      "bytes": 2914673,
+      "sha256": "cbdc9f1daf49b2b750ab379ddcefb0ca3cf8a24425659c0bac5926cdf98c9789"
+    },
+    "swapClaim.zkey": {
+      "bytes": 8208330,
+      "sha256": "428fbabac37d804b091c95f3d365831825a90af16681a4cc95a685b34928dab1"
+    },
+    "SwapClaimVerifier.sol": {
+      "bytes": 10167,
+      "sha256": "fa78fa3c2b8a526f3b825f13058a4796df9bf5d7aff022b388c28b12f22e3782"
+    },
+    "transaction.vkey.json": {
+      "bytes": 4524,
+      "sha256": "bff44c66dc141d858e6301b51f479bda9888c9372e28e86f449f78f5f91b3276"
+    },
+    "transaction.wasm": {
+      "bytes": 2520659,
+      "sha256": "519cad8887cf4375eafd7218f9070308e2a62cebc0290067dd600d219f5e6183"
+    },
+    "transaction.zkey": {
+      "bytes": 12005570,
+      "sha256": "552e77c949ae1c92f3f499096c9412866b0d991faaf136a94a2accb4991c1cbb"
+    },
+    "TransactionVerifier.sol": {
+      "bytes": 9777,
+      "sha256": "b7626da2b795ebc6de812b4078f79cf9888a1ef05f749dfe087dd1940e0f96f8"
+    }
+  }
+}

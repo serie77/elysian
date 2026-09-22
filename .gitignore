@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.next/
+out/
+*.log
+*.tsbuildinfo
+
+# Secrets: only the examples are committed.
+.env
+.env.*
+!.env.example
+
+# Build products. The browser artifacts in web/public/circuits/ and the v1 archive are committed on purpose.
+circuits/ptau/*.ptau
+circuits/build/
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/deployments/localhost.json
+contracts/deployments/localhost.manifest.json
+
+# Local state: node databases (including archived ones) and test-run residue.
+node/data/
+e2e-*.png
+cdp-profile-*/
+.DS_Store

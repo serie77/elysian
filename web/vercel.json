@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "cd .. && npm install --workspace=web --workspace=@elysian/core --no-audit --no-fund",
+  "buildCommand": "cd .. && npm run build --workspace=@elysian/core && npm run build --workspace=web"
+}

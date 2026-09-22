@@ -1,0 +1,78 @@
+﻿[
+    {
+        "Path":  "packages/core/src/keys.ts",
+        "SHA256":  "FA520875192ACE3EDA02EF14646DABB11DC57675C5E524AEE32D38B0FFDA7194"
+    },
+    {
+        "Path":  "packages/core/src/note.ts",
+        "SHA256":  "C38193512C6A91F7B1BB68D4F1423C813642D15287B186CCDA7AD45BA7D467DE"
+    },
+    {
+        "Path":  "packages/core/src/encryption.ts",
+        "SHA256":  "3D4A51B3D347C2E7FFC9DA010339F90B45E8C6383430904A5A5FAB52187D5E3B"
+    },
+    {
+        "Path":  "packages/core/src/constants.ts",
+        "SHA256":  "D2786ED909A192B730584B0647117DD5DE03DF17BAAFB3CAF25BF2951CF59698"
+    },
+    {
+        "Path":  "circuits/src/transaction.circom",
+        "SHA256":  "86FF5EDE853F22804D0C28B94001E452D19126E9BC695508618D83616481AD82"
+    },
+    {
+        "Path":  "circuits/src/swapClaim.circom",
+        "SHA256":  "23D982DA0D5607DCA8DECD6C367700B23A77B8EF3876F57C74D58B8A52A1BABD"
+    },
+    {
+        "Path":  "circuits/scripts/build.mjs",
+        "SHA256":  "3431BF16057E03B3AFFA0D183D8AC02DF3360CCF131B125DBDC337D8E246A238"
+    },
+    {
+        "Path":  "contracts/contracts/ElysianPool.sol",
+        "SHA256":  "6CB5CF9FCEC3EA3F66CC4BB5A4D9047D6EAD04CA1331BDFCEDC1EB7F4642C1B3"
+    },
+    {
+        "Path":  "contracts/contracts/ElysianSwap.sol",
+        "SHA256":  "8BA97E4F6C41F57755381CDCE348F32BEF5C9A3949C855B822C80AC8F31F12B1"
+    },
+    {
+        "Path":  "node/src/server.ts",
+        "SHA256":  "ED8D77B6FA00C3E9291EF1E6239D3C4E28CF6F2E9600BAD06D1DF6FDC1FEB746"
+    },
+    {
+        "Path":  "node/src/indexer.ts",
+        "SHA256":  "4141D25822E69B379EAFD74C43BD07BE7E1ADB4D134370F7A446D640E0319348"
+    },
+    {
+        "Path":  "node/src/explorer.ts",
+        "SHA256":  "A95BC217734131DD8AFE8A52F6A412BD10AAE0EF7E4143610BD4CB663CB31641"
+    },
+    {
+        "Path":  "web/src/lib/wallet/actions.ts",
+        "SHA256":  "C76444A9FE23501D3E3F80349A1E9C3175D27588A91F17DAB40EC08EE0C33C4B"
+    },
+    {
+        "Path":  "web/src/lib/wallet/store.tsx",
+        "SHA256":  "269E85C752583577DD439DF193C016D6831D2D4AB3F1406AFD64A0507D2FB0D4"
+    },
+    {
+        "Path":  "web/src/app/app/trade/page.tsx",
+        "SHA256":  "2C61D6B3186E12490CA925755675E6842580B091251016BFF3B7CF997CCAC8D0"
+    },
+    {
+        "Path":  "web/src/app/app/send/page.tsx",
+        "SHA256":  "3377CD66E42AE03A8AA045BBB7BBA9E2B8C86EAEB290D92B41B4B799770A00AA"
+    },
+    {
+        "Path":  "web/src/app/explorer/view/page.tsx",
+        "SHA256":  "B13EFFCF028F9823CDFFBEC9EF612EC88E1A5AF43E454658476B6616EABDE511"
+    },
+    {
+        "Path":  "web/src/app/explorer/tx/[hash]/page.tsx",
+        "SHA256":  "1B3309CE88900EF8EFA288EF7649B14032FCDCD0F2ADAA702C500B2D4DBEBF95"
+    },
+    {
+        "Path":  "web/next.config.ts",
+        "SHA256":  "FC243F531A1D983A1253A2CE29569900FB82804334BC3D417A977E749711398A"
+    }
+]

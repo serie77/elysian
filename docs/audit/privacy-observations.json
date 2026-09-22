@@ -1,0 +1,261 @@
+{
+  "capturedAt": "2026-09-22T14:35:49.069Z",
+  "source": "http://127.0.0.1:8788",
+  "summary": {
+    "chainId": 4663,
+    "contracts": {
+      "pool": "0x00691Ac23D51d4CD3d2Db435Ee33ADc6d7306074",
+      "swap": "0xA0486cDf5Fa0b8684AA88677D33623F5bD1A532E",
+      "dex": "0x769F3A9Cf3db96f75080A88E6112a489559221fc"
+    },
+    "head": 69730719,
+    "indexed": 69730687,
+    "chainTime": 1790087748,
+    "batchDuration": 60,
+    "currentBatch": "29834795",
+    "poolRoot": "0x051ad94f8d05178af6999fbc177c32bac387ffde2d60f06a2f0620ec3158d482",
+    "swapRoot": "0x1401c0ea39dac42cd2b99a9184c5c5ee6efc8d3e67f99b26b6c304bef0dee29c",
+    "totals": {
+      "notes": 41,
+      "spent": 38,
+      "intents": 4,
+      "batches": 4,
+      "claims": 3
+    },
+    "transactions": 26,
+    "pooled": [
+      {
+        "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+        "symbol": "USDG",
+        "decimals": 6,
+        "balance": "3001001"
+      },
+      {
+        "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+        "symbol": "WETH",
+        "decimals": 18,
+        "balance": "181026719622201"
+      },
+      {
+        "address": "0x2e8c31162b855a2ffa90f6f8634643ad6f111e18",
+        "symbol": "AI",
+        "decimals": 18,
+        "balance": "1"
+      }
+    ]
+  },
+  "relayer": "0x1788E38EB9A26C8aF3c7149E4B1c35e95290E295",
+  "batches": {
+    "total": 4,
+    "rows": [
+      {
+        "batchId": "29833653",
+        "opens": 1790019180,
+        "assetIn": {
+          "address": "0x2e8c31162b855a2ffa90f6f8634643ad6f111e18",
+          "symbol": "AI",
+          "decimals": 18
+        },
+        "assetOut": {
+          "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+          "symbol": "USDG",
+          "decimals": 6
+        },
+        "totalIn": "4229300000000000000",
+        "totalOut": "984369",
+        "executed": true,
+        "refunded": false,
+        "orders": 1,
+        "tx": "0xbee87d17f46ef04c0e13863fbcce8ea43919fca2ef002be38f4f46a9be70ab1c",
+        "executedAt": 1790019241
+      },
+      {
+        "batchId": "29833645",
+        "opens": 1790018700,
+        "assetIn": {
+          "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+          "symbol": "USDG",
+          "decimals": 6
+        },
+        "assetOut": {
+          "address": "0x2e8c31162b855a2ffa90f6f8634643ad6f111e18",
+          "symbol": "AI",
+          "decimals": 18
+        },
+        "totalIn": "1000000",
+        "totalOut": "4229338409219254589",
+        "executed": true,
+        "refunded": false,
+        "orders": 1,
+        "tx": "0xffb37e82f41f3ef0fccf94e901367934f4b23250b2bd28ed7ad980be4f7813c3",
+        "executedAt": 1790018774
+      },
+      {
+        "batchId": "29833637",
+        "opens": 1790018220,
+        "assetIn": {
+          "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+          "symbol": "USDG",
+          "decimals": 6
+        },
+        "assetOut": {
+          "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "symbol": "WETH",
+          "decimals": 18
+        },
+        "totalIn": "100000",
+        "totalOut": "36134628892722",
+        "executed": true,
+        "refunded": false,
+        "orders": 1,
+        "tx": "0xd6010ab62ac52a1717274ad6ed7d4acb0001412c2965f19d0b9a6e97adb657fb",
+        "executedAt": 1790018292
+      },
+      {
+        "batchId": "29833635",
+        "opens": 1790018100,
+        "assetIn": {
+          "address": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+          "symbol": "USDG",
+          "decimals": 6
+        },
+        "assetOut": {
+          "address": "0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+          "symbol": "WETH",
+          "decimals": 18
+        },
+        "totalIn": "500000",
+        "totalOut": "181026719622201",
+        "executed": true,
+        "refunded": false,
+        "orders": 1,
+        "tx": "0x287e374170f535791b0efa78076ba590bca343406a754990423208793a5bcfda",
+        "executedAt": 1790018171
+      }
+    ]
+  },
+  "analyzedTransactionCount": 26,
+  "totalIndexedTransactions": 26,
+  "swaps": [
+    {
+      "hash": "0x829bebc48d2426326a3861f8e86c09e53569efb9ccd6aa5ac51db896ca810c8f",
+      "from": "0x1788e38eb9a26c8af3c7149e4b1c35e95290e295",
+      "relayer": null,
+      "batchId": "29833653",
+      "amount": "4229300000000000000",
+      "symbol": "AI"
+    },
+    {
+      "hash": "0x94002992927a2c1b5de45bf77c5ec15ff11306dd0770e5e30bd6177585749a0a",
+      "from": "0x1788e38eb9a26c8af3c7149e4b1c35e95290e295",
+      "relayer": null,
+      "batchId": "29833645",
+      "amount": "1000000",
+      "symbol": "USDG"
+    },
+    {
+      "hash": "0x32653aa6813aec556c089e7e1490b030b24be790cf546c1682fc2874a858c7d3",
+      "from": "0x1788e38eb9a26c8af3c7149e4b1c35e95290e295",
+      "relayer": null,
+      "batchId": "29833637",
+      "amount": "100000",
+      "symbol": "USDG"
+    },
+    {
+      "hash": "0xaf506501b582bf2f38632c80708195b66954d7a85cb038c448c70a6b9ace6ee8",
+      "from": "0x1788e38eb9a26c8af3c7149e4b1c35e95290e295",
+      "relayer": null,
+      "batchId": "29833635",
+      "amount": "500000",
+      "symbol": "USDG"
+    }
+  ],
+  "claims": [
+    {
+      "hash": "0xf0d3f840e64456c1c7e6872370bcbc78f07acb665dc3119e51e36de274565953",
+      "from": "0x1788e38eb9a26c8af3c7149e4b1c35e95290e295",
+      "batchId": "29833653",
+      "reportedAmount": null,
+      "orders": 1,
+      "inferablePayoutRaw": "984369",
+      "outputCommitments": [
+        {
+          "idx": 38,
+          "commitment": "0x0c91f7020ac6dc5ff0a60e8c51ea92041ebd23fd43d7f44a4afe8c4aa5ce5f68",
+          "size": 282
+        }
+      ]
+    },
+    {
+      "hash": "0x3e6b1f4e95b6992934748e84e0e42aed69052c78d4c6abda4bc80992cd34f4dc",
+      "from": "0x1788e38eb9a26c8af3c7149e4b1c35e95290e295",
+      "batchId": "29833645",
+      "reportedAmount": null,
+      "orders": 1,
+      "inferablePayoutRaw": "4229338409219254589",
+      "outputCommitments": [
+        {
+          "idx": 29,
+          "commitment": "0x2f6930da89d79d1b86487dc187046a5d5c45e41f0cabb86bddec35ebbff058dc",
+          "size": 282
+        }
+      ]
+    },
+    {
+      "hash": "0x00c7eca4051b744d75dffbc9384319c4e0a4900274112a908dd9b3f2d5098dbc",
+      "from": "0x1788e38eb9a26c8af3c7149e4b1c35e95290e295",
+      "batchId": "29833637",
+      "reportedAmount": null,
+      "orders": 1,
+      "inferablePayoutRaw": "36134628892722",
+      "outputCommitments": [
+        {
+          "idx": 16,
+          "commitment": "0x1b7cff1c087f652edbc916f4247f8c43f57a53e8bb1df864918bc5ff55075e51",
+          "size": 282
+        }
+      ]
+    }
+  ],
+  "localExplorerHeaders": {
+    "cache-control": "s-maxage=31536000",
+    "connection": "close",
+    "content-length": "16789",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Tue, 22 Sep 2026 14:35:48 GMT",
+    "etag": "\"9ehi175migcy9\"",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+    "x-nextjs-cache": "HIT",
+    "x-nextjs-prerender": "1, 1",
+    "x-nextjs-stale-time": "300",
+    "x-powered-by": "Next.js"
+  },
+  "memoLengths": [
+    {
+      "memoBytes": 0,
+      "ciphertextBytes": 140
+    },
+    {
+      "memoBytes": 5,
+      "ciphertextBytes": 145
+    },
+    {
+      "memoBytes": 128,
+      "ciphertextBytes": 268
+    }
+  ],
+  "verifierChecks": [
+    {
+      "name": "TransactionVerifier",
+      "address": "0xE8D4cf8cdf3a711914Fd38e5b8B4A59a42381754",
+      "exactRuntimeMatch": true,
+      "rpcError": null
+    },
+    {
+      "name": "SwapClaimVerifier",
+      "address": "0x0D23fE3aEFE90A0601E12ba9FB09290b825Bc97B",
+      "exactRuntimeMatch": true,
+      "rpcError": null
+    }
+  ]
+}

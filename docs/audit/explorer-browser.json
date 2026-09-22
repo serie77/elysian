@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-09-22T14:37:52.283Z",
+  "pages": [
+    {
+      "label": "home",
+      "path": "/explorer",
+      "text": "ELYSIAN\nExplorer\nMainnet\nSite\nApp\nHome\nTransactions\nBatches\nNotes\nViewing Key\nTRANSACTIONS\n26\nLATEST BLOCK\n69,731,767\nIndexed to 69,731,763\nNOTES\n41\n38 nullified\nCURRENT BATCH\n29834797\n60s window · 4 cleared\nPool Holdings\nToken\tContract\tShielded Balance\n\nUSDG\t\n0x5fc536…f1d168\n\t3.001001\n\nWETH\t\n0x0bd7d3…acad73\n\t0.000181\n\nAI\t\n0x2e8c31…111e18\n\t< 0.000001\nProtocol\nPool\n0x00691A…306074\nSwap\n0xA0486c…1A532E\nVenue Adapter\n0x769F3A…9221fc\nNote Tree Root\n0x051ad94f…3158d482\nOrder Tree Root\n0x1401c0ea…f0dee29c\nChain ID\n4663\nLatest Transactions\nView all\nTxn Hash\tMethod\tAge\tAmount\n\n0x6016277a…f5cfab5e\n\tUnshield\t19 hrs ago\t\n0.983386\nUSDG\n\n\n0xf0d3f840…74565953\n\tClaim\t19 hrs ago\t\nUSDG\n\n\n0xbee87d17…be70ab1c\n\tExecute Batch\t19 hrs ago\t\n4.2293\nAI\nfor USDG\n\n0x829bebc4…ca810c8f\n\tSealed Order\t19 hrs ago\t\n4.2293\nAI\nfor USDG\n\n0xa16753a8…9a14ed57\n\tShield\t19 hrs ago\t\n4.2293\nAI\n\n\n0x29b9f3c8…fa9d5d7c\n\tUnshield\t19 hrs ago\t\n1.497502\nUSDG\n\n\n0x2a6cdb79…90b6d4ac\n\tUnshield\t19 hrs ago\t\n4.225113\nAI\n\n\n0x3e6b1f4e…cd34f4dc\n\tClaim\t19 hrs ago\t\nAI\nLatest Batches\nView all\nBatch\tPair\tStatus\tSold\tBought\n29833653\t\nAI\n/\nUSDG\t\nCleared\t\n4.2293\nAI\n\t\n0.984369\nUSDG\n\n29833645\t\nUSDG\n/\nAI\t\nCleared\t\n1\nUSDG\n\t\n4.229338\nAI\n\n29833637\t\nUSDG\n/\nWETH\t\nCleared\t\n0.1\nUSDG\n\t\n0.000036\nWETH\n\n29833635\t\nUSDG\n/\nWETH\t\nCleared\t\n0.5\nUSDG\n\t\n0.000181\nWETH\nElysian Explorer\nIndexed by the Elysian node"
+    },
+    {
+      "label": "claim",
+      "path": "/explorer/tx/0xf0d3f840e64456c1c7e6872370bcbc78f07acb665dc3119e51e36de274565953",
+      "text": "ELYSIAN\nExplorer\nMainnet\nSite\nApp\nHome\nTransactions\nBatches\nNotes\nViewing Key\nTransaction Details\nOverview\nLogs (2)\nPrivacy\nClaim\nUSDG\nfrom batch\n29833653\nProved ownership of a sealed order\nin batch\n29833653\n(AI\nfor\nUSDG)\nWhich order\nPaid out\nat the batch price of\n0.23275 USDG per AI\nCreated note\n#38\nholding the claimed share. Amount and owner are shielded\n?\nTransaction Hash:\n0xf0d3f840e64456c1c7e6872370bcbc78f07acb665dc3119e51e36de274565953\nView on chain explorer\nStatus:\nSuccess\n?\nBlock:\n69,051,815679,989 block confirmations\nTimestamp:\n19 hrs ago (Mon, 21 Sep 2026 19:34:07 GMT)\nAction:\nClaim\n?\nFunction:\nclaim 0xeddf4b14\n?\nFrom:\n0x1788e38eb9a26c8af3c7149e4b1c35e95290e295\nInteracted With (To):\n0xa0486cdf5fa0b8684aa88677d33623f5bd1a532e\nElysian: Swap\nShielded Action\n?\nToken:\nUSDG\n0x5fc536…f1d168\n?\nPublic Amount:\nShielded\nBatch:\n29833653\n?\nMerkle Root:\n0x1401c0ea39dac42cd2b99a9184c5c5ee6efc8d3e67f99b26b6c304bef0dee29c\n?\nNullifiers (0):\n–\n?\nCommitments (1):\n#38\n0x0c91f7020ac6dc5ff0a60e8c51ea92041ebd23fd43d7f44a4afe8c4aa5ce5f68\n140 bytes ciphertext\nZero-Knowledge Proof:\nGroth16, verified on-chain\nTransaction Fee:\n0.000062542644 ETH\nGas Price:\n0.0574 Gwei\nGas Limit & Usage:\n1,112,956 | 1,090,467 (97.98%)\nNonce / Position:\n36 / 4\nInput Data:\nShow 772 bytes\nElysian Explorer\nIndexed by the Elysian node",
+      "privacyText": "ELYSIAN\nExplorer\nMainnet\nSite\nApp\nHome\nTransactions\nBatches\nNotes\nViewing Key\nTransaction Details\nOverview\nLogs (2)\nPrivacy\nFields Not Published On-Chain\nClaimant:\nShielded\nWhich order is claimed:\nShielded\nAmount received:\nShielded\nElysian Explorer\nIndexed by the Elysian node"
+    },
+    {
+      "label": "batch",
+      "path": "/explorer/tx/0xbee87d17f46ef04c0e13863fbcce8ea43919fca2ef002be38f4f46a9be70ab1c",
+      "text": "ELYSIAN\nExplorer\nMainnet\nSite\nApp\nHome\nTransactions\nBatches\nNotes\nViewing Key\nTransaction Details\nOverview\nLogs (7)\nPrivacy\nCleared batch\n29833653\n:\n4.2293\nAI\nfor\n0.984369\nUSDG\nSold\n4.2293\nAI\npooled from 1 sealed order on the venue\nReceived\n0.984369\nUSDG\ninto\nElysian: Pool\nClearing price 0.23275 USDG per AI\nfor every order in the batch\nTraders\nEach claims their share separately\n?\nTransaction Hash:\n0xbee87d17f46ef04c0e13863fbcce8ea43919fca2ef002be38f4f46a9be70ab1c\nView on chain explorer\nStatus:\nSuccess\n?\nBlock:\n69,051,759680,045 block confirmations\nTimestamp:\n19 hrs ago (Mon, 21 Sep 2026 19:34:01 GMT)\nAction:\nExecute Batch\n?\nFunction:\nexecuteBatch 0x85067ed7\n?\nFrom:\n0x1788e38eb9a26c8af3c7149e4b1c35e95290e295\nExecutor\nInteracted With (To):\n0xa0486cdf5fa0b8684aa88677d33623f5bd1a532e\nElysian: Swap\n?\nERC-20 Tokens Transferred:\nFrom\nElysian: Swap\nTo\nElysian: Venue Adapter\nFor\n4.2293\nAI\nFrom\n0xe547c1…d7d564\nTo\nElysian: Pool\nFor\n0.984369\nUSDG\nFrom\nElysian: Venue Adapter\nTo\n0xe547c1…d7d564\nFor\n4.2293\nAI\nShielded Action\n?\nToken:\nAI\n0x2e8c31…111e18\n?\nBatch Size:\n4.2293\nAI\nBuying:\nUSDG\nBatch:\n29833653\n?\nMinimum Output:\n0.979447\nUSDG\n?\nNullifiers (0):\n–\n?\nCommitments (0):\n–\nZero-Knowledge Proof:\nGroth16, verified on-chain\nTransaction Fee:\n0.000033478026 ETH\nGas Price:\n0.0579 Gwei\nGas Limit & Usage:\n648,425 | 578,524 (89.22%)\nNonce / Position:\n35 / 2\nInput Data:\nShow 132 bytes\nElysian Explorer\nIndexed by the Elysian node"
+    },
+    {
+      "label": "view",
+      "path": "/explorer/view",
+      "text": "ELYSIAN\nExplorer\nMainnet\nSite\nApp\nHome\nTransactions\nBatches\nNotes\nViewing Key\nViewing Key\nDecrypt\n\nDecryption runs in this browser. The key is not sent to any server and cannot spend funds.\n\nElysian Explorer\nIndexed by the Elysian node",
+      "afterScanText": "ELYSIAN\nExplorer\nMainnet\nSite\nApp\nHome\nTransactions\nBatches\nNotes\nViewing Key\nViewing Key\nDecrypt\n\nDecryption runs in this browser. The key is not sent to any server and cannot spend funds.\n\nShielded Balances\n\nNo unspent notes\n\nNotes (0)\n\nThis key owns no notes\n\nElysian Explorer\nIndexed by the Elysian node",
+      "syntheticViewingKeyInNetwork": false,
+      "scanRequestUrls": [
+        "http://127.0.0.1:8788/commitments?from=0&limit=5000",
+        "http://127.0.0.1:8788/nullifiers",
+        "http://127.0.0.1:8788/swaps?from=0&limit=5000",
+        "http://127.0.0.1:8788/explorer/summary",
+        "http://127.0.0.1:8788/explorer/txs?limit=100&offset=0",
+        "http://127.0.0.1:8788/state",
+        "http://127.0.0.1:8788/commitments?from=41&limit=5000",
+        "http://127.0.0.1:8788/swaps?from=4&limit=5000",
+        "http://127.0.0.1:8788/nullifiers",
+        "http://127.0.0.1:8788/batches?limit=40",
+        "http://127.0.0.1:8788/claims"
+      ]
+    }
+  ],
+  "errors": [],
+  "requestOrigins": [
+    "http://localhost:3002",
+    "http://127.0.0.1:8788"
+  ]
+}

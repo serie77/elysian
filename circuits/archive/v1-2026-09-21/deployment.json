@@ -1,0 +1,14 @@
+{
+  "network": "robinhood",
+  "chainId": 4663,
+  "deployedAt": "2026-09-21T19:13:38.670Z",
+  "startBlock": 69039552,
+  "hasher": "0x1F315B0E48Fd60EE9F4c6267566a4554E43fBBa2",
+  "transactionVerifier": "0xE8D4cf8cdf3a711914Fd38e5b8B4A59a42381754",
+  "swapClaimVerifier": "0x0D23fE3aEFE90A0601E12ba9FB09290b825Bc97B",
+  "pool": "0x00691Ac23D51d4CD3d2Db435Ee33ADc6d7306074",
+  "swap": "0xA0486cDf5Fa0b8684AA88677D33623F5bD1A532E",
+  "dex": "0x769F3A9Cf3db96f75080A88E6112a489559221fc",
+  "batchDuration": 60,
+  "levels": 20
+}

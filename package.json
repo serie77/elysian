@@ -1,0 +1,27 @@
+{
+  "name": "elysian",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Elysian — a shielded execution layer for Robinhood Chain.",
+  "workspaces": [
+    "packages/core",
+    "circuits",
+    "contracts",
+    "node",
+    "web"
+  ],
+  "scripts": {
+    "build:core": "npm run build -w @elysian/core",
+    "circuits": "node circuits/scripts/build.mjs",
+    "compile": "npm run compile -w contracts",
+    "test": "npm run test -w contracts",
+    "node": "npm run dev -w @elysian/node",
+    "web": "npm run dev -w web",
+    "dev": "node scripts/dev.mjs",
+    "test:core": "npm test -w @elysian/core",
+    "typecheck": "npm run typecheck -w @elysian/node && cd web && tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}
