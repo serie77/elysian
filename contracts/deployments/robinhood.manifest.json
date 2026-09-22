@@ -1,5 +1,7 @@
 {
   "createdAt": "2026-09-22T17:11:45.278Z",
+  "git": "9e7b547ccf0471b129fde416cf5663f8c030c7a6",
+  "repository": "https://github.com/serie77/elysian",
   "deployment": {
     "network": "robinhood",
     "version": 2,

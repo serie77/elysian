@@ -1,0 +1,21 @@
+# Only what node/Dockerfile copies is worth sending to the builder.
+node_modules
+**/node_modules
+.next
+**/.next
+.git
+.env
+.env.*
+node/data
+circuits/build
+circuits/ptau
+circuits/archive
+contracts/artifacts
+contracts/cache
+contracts/typechain-types
+web/public
+web/.next
+brand
+docs
+*.png
+*.log

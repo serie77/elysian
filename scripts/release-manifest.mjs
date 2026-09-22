@@ -2,6 +2,7 @@
 // artifacts, verifier and contract sources) beside the deployment record, so a running deployment
 // can always be matched to the exact files that produced it.
 //   node scripts/release-manifest.mjs robinhood
+import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -30,8 +31,16 @@ for (const dir of dirs) {
 }
 
 const deploymentFile = path.join(root, 'contracts/deployments', `${name}.json`);
+// The exact revision the hashes were taken from, when the tree is in git.
+let git = null;
+try {
+  git = execSync('git rev-parse HEAD', { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+} catch {
+  /* not a repository yet */
+}
 const manifest = {
   createdAt: new Date().toISOString(),
+  git,
   deployment: existsSync(deploymentFile) ? JSON.parse(readFileSync(deploymentFile, 'utf8')) : null,
   files: Object.fromEntries(Object.entries(files).sort(([a], [b]) => a.localeCompare(b))),
 };
