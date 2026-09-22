@@ -15,8 +15,8 @@ const points = [
     p: 'Every trade pays the 1% Pons fee and Pons sends 70% of it to the token’s creator. Elysian’s share goes to consistent buybacks of $ELYSIAN.',
   },
   {
-    h: 'No added tax. Ever.',
-    p: 'The fee on $ELYSIAN is the base 1% Pons fee and nothing else. There is no creator tax on top, and there never will be. Buying and selling $ELYSIAN costs what buying and selling anything on Pons costs.',
+    h: 'No added tax.',
+    p: 'The fee on $ELYSIAN is the base 1% Pons fee and nothing else. There is no creator tax on top. Buying and selling $ELYSIAN costs what buying and selling anything on Pons costs.',
   },
 ];
 
