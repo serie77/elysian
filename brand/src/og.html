@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- Link preview card, 1200 x 630, rendered at 2x and downscaled to 1200 x 630 in web/public/og.png.
+     Render: node brand/render-og.mjs -->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Geist+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+  * { margin:0; box-sizing:border-box; }
+  html, body { width:1200px; height:630px; overflow:hidden; background:#0a0a0b; }
+  .stage { position:relative; width:1200px; height:630px; overflow:hidden; background:#0a0a0b; color:#f4f4f5; font-family:Geist,sans-serif; }
+  .grid { position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size:60px 60px; background-position:24px 15px; -webkit-mask-image:radial-gradient(ellipse at 30% 50%, #000 20%, transparent 90%); }
+  .spark { position:absolute; width:3px; height:3px; border-radius:50%; background:#7db4ff; }
+  .mark { position:absolute; left:80px; top:64px; width:52px; height:52px; }
+  .word { position:absolute; left:148px; top:80px; font:600 22px/1 Geist,sans-serif; letter-spacing:.42em; }
+  .h1 { position:absolute; left:80px; top:214px; font:600 92px/1 Geist,sans-serif; letter-spacing:-.04em; }
+  .h1 b { font-weight:600; color:#ccfe01; }
+  .sub { position:absolute; left:80px; top:436px; font:500 28px/1.35 Geist,sans-serif; letter-spacing:-.01em; color:#a1a1aa; max-width:820px; }
+  .tag { position:absolute; left:80px; bottom:56px; font:500 14px/1 "Geist Mono",monospace; letter-spacing:.26em; color:#a1a1aa; }
+  .big { position:absolute; right:-70px; top:120px; width:560px; height:560px; opacity:.16; }
+</style></head><body><div class="stage">
+  <div class="grid"></div>
+  <div class="spark" style="left:980px;top:96px;opacity:.6"></div><div class="spark" style="left:1080px;top:520px;opacity:.5"></div><div class="spark" style="left:860px;top:560px;opacity:.35"></div><div class="spark" style="left:1140px;top:300px;opacity:.55"></div>
+  <svg class="big" viewBox="0 0 24 24"><defs><mask id="k2" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff"/><rect x="11.38" y="0" width="1.24" height="24" fill="#000"/></mask></defs><g fill="#f4f4f5"><path d="__GLYPH__" mask="url(#k2)"/><path d="__SPEAR__"/></g></svg>
+  <svg class="mark" viewBox="0 0 24 24"><defs><mask id="k" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff"/><rect x="11.38" y="0" width="1.24" height="24" fill="#000"/></mask></defs><g fill="#f4f4f5"><path d="__GLYPH__" mask="url(#k)"/><path d="__SPEAR__"/></g></svg>
+  <div class="word">ELYSIAN</div>
+  <div class="h1">The privacy layer<br>for <b>Robinhood Chain.</b></div>
+  <div class="sub">Buy stocks, memecoins or any token, and send them to anyone. Privately.</div>
+  <div class="tag">SHIELD &middot; SEND &middot; TRADE</div>
+</div></body></html>

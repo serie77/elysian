@@ -1,0 +1,273 @@
+<!doctype html>
+<!-- Ten seconds of Elysian, drawn frame by frame on a canvas so every frame is deterministic.
+     window.__seek(t) draws the frame at t seconds; window.__record() encodes the whole thing to an MP4 in the browser.
+     Render: node brand/video/record.mjs -->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700&family=Geist+Mono:wght@400;500&display=block" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.1/build/mp4-muxer.min.js"></script>
+<style>
+  * { margin:0; } html, body { width:1920px; height:1080px; overflow:hidden; background:#0a0a0b; }
+  canvas { display:block; width:1920px; height:1080px; }
+  /* Forces the faces to load before the first frame. */
+  .warm { position:absolute; left:-9999px; top:0; font-family:Geist; font-weight:600; }
+  .warm b { font-family:"Geist Mono"; font-weight:500; }
+</style></head><body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<div class="warm">Elysian<b>elysian</b></div>
+<script>
+const W = 1920, H = 1080, FPS = 30, DUR = 10;
+const BG = '#0a0a0b', INK = '#f4f4f5', INK2 = '#a1a1aa', INK3 = '#71717a', BONE = '#efe9dc', BONE2 = '#bdb5a6', GREEN = '#ccfe01', BLUE = '#7db4ff';
+const GLYPH = "M16.33 19.3L16.33 19.3Q15.92 19.3 15.1 19.27Q14.28 19.24 13.24 19.19Q12.21 19.13 11.11 19.07Q10.01 19.01 8.96 18.94Q7.91 18.86 7.1 18.78Q6.28 18.7 5.82 18.62L5.82 18.62Q5.82 18.41 5.88 18.21Q5.94 18.01 6.01 17.93L6.01 17.93L6.61 17.85Q6.96 17.81 7.17 17.6Q7.38 17.39 7.48 16.97Q7.58 16.54 7.58 15.82L7.58 15.82L7.58 7.58Q7.58 6.96 7.66 6.62Q7.73 6.28 7.83 6.14Q7.94 6.01 7.94 5.99L7.94 5.99L6.05 5.99Q5.97 5.9 5.89 5.73Q5.82 5.55 5.8 5.34L5.8 5.34Q5.92 5.2 6.18 5.05Q6.44 4.91 6.7 4.8Q6.96 4.7 7.08 4.7L7.08 4.7L16.31 4.7Q16.79 4.87 17.28 5.19Q17.77 5.51 18.06 5.86L18.06 5.86Q17.97 7.19 17.77 8.19Q17.56 9.2 17.41 9.7L17.41 9.7Q16.98 9.7 16.56 9.62Q16.15 9.53 15.9 9.45L15.9 9.45L15.34 6.42Q15.09 6.32 14.59 6.25Q14.09 6.17 13.39 6.11Q12.68 6.05 11.79 6.05L11.79 6.05Q11.27 6.05 11 6.26Q10.73 6.46 10.64 6.82Q10.55 7.17 10.55 7.58L10.55 7.58L10.55 11.13Q11.44 11.09 12.15 11.07Q12.85 11.05 13.49 10.98Q14.14 10.92 14.78 10.86L14.78 10.86L15.05 11.17Q15.01 11.65 14.94 11.98Q14.88 12.31 14.8 12.52L14.8 12.52L10.55 12.52L10.55 16.36Q10.55 16.83 10.43 17.2Q10.32 17.56 10.2 17.7L10.2 17.7L15.19 17.7L16.62 14.01Q17.12 14.01 17.58 14.14Q18.03 14.26 18.2 14.36L18.2 14.36Q18.2 15.07 18.15 15.83Q18.1 16.58 18.01 17.26Q17.93 17.93 17.85 18.39L17.85 18.39Q17.72 18.55 17.41 18.76Q17.1 18.97 16.8 19.13Q16.5 19.3 16.33 19.3";
+const SPEAR = "M11.85 3H12.15V21H11.85ZM12 0.3L12.52 2.5L12 3.7L11.48 2.5ZM11.48 21.5L12 20.3L12.52 21.5L12 23.7ZM11.1 4.5L12 4.24L12.9 4.5L12 4.76ZM11.1 19.5L12 19.24L12.9 19.5L12 19.76Z";
+const NVDA = "__NVDA__", AAPL = "__AAPL__";
+const ctx = document.getElementById('c').getContext('2d');
+
+/* ------------------------------------------------ helpers ------------------------------------------------ */
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const outExpo = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+const outQuint = (t) => 1 - Math.pow(1 - t, 5);
+const inOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const outBack = (t) => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2);
+/** 0 before `start`, 1 after `start + dur`, eased between. */
+const seg = (t, start, dur, ease = outExpo) => ease(clamp((t - start) / dur));
+/** Fades a scene in over `f` seconds at `a` and out over `f` seconds before `b`. */
+const window_ = (t, a, b, f = 0.35) => Math.min(seg(t, a, f, inOut), 1 - seg(t, b - f, f, inOut));
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function text(str, x, y, font, color, spacing = '0em', align = 'left') {
+  ctx.font = font; ctx.fillStyle = color; ctx.letterSpacing = spacing; ctx.textAlign = align; ctx.textBaseline = 'alphabetic'; ctx.fillText(str, x, y);
+}
+const mono = (px) => `500 ${px}px "Geist Mono"`;
+const sans = (px, w = 600) => `${w} ${px}px Geist`;
+
+/* --------------------------------------------- the halftone mark --------------------------------------------- */
+const SIZE = 560, STEP = 7;
+const dots = (() => {
+  const st = document.createElement('canvas'); st.width = st.height = SIZE;
+  const sc = st.getContext('2d', { willReadFrequently: true });
+  sc.scale(SIZE / 24, SIZE / 24);
+  sc.fill(new Path2D(GLYPH)); sc.clearRect(11.38, 0, 1.24, 24); sc.fill(new Path2D(SPEAR));
+  const ink = sc.getImageData(0, 0, SIZE, SIZE).data;
+  const out = [];
+  for (let y = 0; y < SIZE; y += STEP) for (let x = 0; x < SIZE; x += STEP) {
+    if (ink[(y * SIZE + x) * 4 + 3] < 128) continue;
+    const nx = x / SIZE - 0.5, ny = y / SIZE - 0.5;
+    const light = clamp(0.68 - 0.85 * nx - 1.05 * ny, 0.08, 1);
+    out.push({ x: x - SIZE / 2, y: y - SIZE / 2, light, d: Math.hypot(nx, ny) });
+  }
+  return out;
+})();
+function emblem(cx, cy, scale, progress, alpha = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.translate(cx, cy); ctx.scale(scale, scale);
+  for (const d of dots) {
+    // Dots arrive from the centre outward, each with a small overshoot.
+    const p = clamp((progress - d.d * 0.9) / 0.35);
+    if (p <= 0) continue;
+    const s = outBack(p);
+    const v = Math.round(84 + 171 * d.light);
+    ctx.fillStyle = `rgb(${v},${v},${v - 4})`;
+    ctx.beginPath(); ctx.arc(d.x, d.y, STEP * (0.17 + 0.31 * d.light) * s, 0, 6.2832); ctx.fill();
+  }
+  ctx.restore();
+}
+function solidMark(cx, cy, size, alpha = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.translate(cx - size / 2, cy - size / 2); ctx.scale(size / 24, size / 24);
+  ctx.fillStyle = INK; ctx.fill(new Path2D(GLYPH)); ctx.clearRect(11.38, 0, 1.24, 24);
+  // clearRect punched through to the background: paint it back, then the spear.
+  ctx.fillStyle = BG; ctx.fillRect(11.38, 0, 1.24, 24); ctx.fillStyle = INK; ctx.fill(new Path2D(SPEAR));
+  ctx.restore();
+}
+
+/* ----------------------------------------------- backdrop ----------------------------------------------- */
+const sparks = Array.from({ length: 46 }, (_, i) => {
+  const r = (n) => { const x = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return x - Math.floor(x); };
+  return { x: r(1) * W, y: r(2) * H, vx: (r(3) - 0.5) * 14, vy: (r(4) - 0.5) * 9, a: 0.25 + r(5) * 0.6, w: r(6) < 0.28, s: 1.6 + r(7) * 2.2 };
+});
+function backdrop(t) {
+  ctx.globalAlpha = 1; ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1;
+  for (let x = 36.5; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 30.5; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  const g = ctx.createRadialGradient(W / 2, H * 0.4, 200, W / 2, H * 0.4, 1150);
+  g.addColorStop(0, 'rgba(10,10,11,0)'); g.addColorStop(1, 'rgba(10,10,11,1)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  for (const s of sparks) {
+    const x = ((s.x + s.vx * t) % W + W) % W, y = ((s.y + s.vy * t) % H + H) % H;
+    ctx.globalAlpha = s.a * (0.75 + 0.25 * Math.sin(t * 1.3 + s.x));
+    ctx.fillStyle = s.w ? INK : BLUE; ctx.beginPath(); ctx.arc(x, y, s.s / 2, 0, 6.2832); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+function label(t, a) {
+  // The small line that stays through the whole piece.
+  ctx.globalAlpha = a;
+  text('ELYSIAN  ·  ON', 120, 112, mono(19), INK2, '0.24em');
+  const w = ctx.measureText('ELYSIAN  ·  ON ').width;
+  text('ROBINHOOD CHAIN', 120 + w, 112, mono(19), GREEN, '0.24em');
+  ctx.globalAlpha = 1;
+}
+function bar(x, y, w, h, p, color = BONE, r = 4) { if (p <= 0) return; ctx.fillStyle = color; roundRect(x, y, w * p, h, r); ctx.fill(); }
+
+/* ------------------------------------------------ assets ------------------------------------------------ */
+const images = {};
+const ready = Promise.all([
+  ['usdg', 'file:///D:/L1/web/public/tokens/usdg.png'],
+  ['ai', 'file:///D:/L1/web/public/tokens/ai.jpg'],
+].map(([k, src]) => new Promise((res) => { const im = new Image(); im.onload = () => { images[k] = im; res(); }; im.onerror = res; im.src = src; })));
+const chips = [
+  { name: 'NVDA', path: new Path2D(NVDA) },
+  { name: 'AAPL', path: new Path2D(AAPL) },
+  { name: 'USDG', img: 'usdg' },
+  { name: 'AI', img: 'ai' },
+];
+function chip(c, x, y, alpha, scale = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.scale(scale, scale);
+  ctx.font = sans(26); ctx.letterSpacing = '-0.01em';
+  const tw = ctx.measureText(c.name).width, w = 16 + 44 + 16 + tw + 28, h = 72;
+  ctx.fillStyle = '#121214'; roundRect(0, -h / 2, w, h, 36); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.16)'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.save(); ctx.beginPath(); ctx.arc(16 + 22, 0, 22, 0, 6.2832); ctx.clip();
+  if (c.img && images[c.img]) ctx.drawImage(images[c.img], 16, -22, 44, 44);
+  else { ctx.fillStyle = INK; ctx.fillRect(16, -22, 44, 44); ctx.translate(16 + 8, -14); ctx.scale(28 / 24, 28 / 24); ctx.fillStyle = BG; ctx.fill(c.path); }
+  ctx.restore();
+  ctx.fillStyle = INK; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(c.name, 16 + 44 + 16, 1);
+  ctx.restore();
+  return w;
+}
+
+/* ------------------------------------------------- scenes ------------------------------------------------- */
+// 1. The mark assembles.                                      0.0 – 2.2
+function sceneOpen(t) {
+  const a = window_(t, 0, 2.4, 0.4); if (a <= 0) return;
+  emblem(1290, 540, 1.15, seg(t, 0.1, 1.6, (x) => x), a);
+  ctx.globalAlpha = a * seg(t, 0.7, 0.8, outQuint);
+  text('ELYSIAN', 120, 560, sans(44), INK, '0.42em');
+  text('The privacy layer', 120, 660, sans(76), INK, '-0.035em');
+  text('for', 120, 750, sans(76), INK, '-0.035em');
+  const w = ctx.measureText('for ').width;
+  text('Robinhood Chain.', 120 + w, 750, sans(76), GREEN, '-0.035em');
+  ctx.globalAlpha = 1;
+}
+// 2. A transfer, then the bars.                               2.2 – 5.0
+function sceneLedger(t) {
+  const a = window_(t, 2.2, 5.1); if (a <= 0) return;
+  const s = t - 2.2;
+  ctx.globalAlpha = a * seg(s, 0, 0.6, outQuint);
+  text('The chain sees', 120, 300, sans(96), INK, '-0.04em');
+  const hl = seg(s, 1.9, 0.5, outQuint);
+  ctx.globalAlpha = a * hl;
+  ctx.font = sans(96); ctx.letterSpacing = '-0.04em';
+  const pw = ctx.measureText('a proof.').width;
+  ctx.fillStyle = BONE; roundRect(112, 336, pw + 48, 118, 12); ctx.fill();
+  text('a proof.', 136, 430, sans(96), BG, '-0.04em');
+  // the row
+  const y0 = 590, cols = [120, 560, 1000, 1400], heads = ['FROM', 'TO', 'AMOUNT', 'PROOF'];
+  ctx.globalAlpha = a * seg(s, 0.25, 0.5, outQuint);
+  heads.forEach((h, i) => text(h, cols[i], y0, mono(18), INK3, '0.22em'));
+  ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.beginPath(); ctx.moveTo(120, y0 + 26); ctx.lineTo(1800, y0 + 26); ctx.stroke();
+  const vals = ['0x7a1f…9c2e', '0x4be0…11d3', '1,250.00 NVDA'];
+  vals.forEach((v, i) => { ctx.globalAlpha = a * seg(s, 0.4 + i * 0.12, 0.4, outQuint); text(v, cols[i], y0 + 96, mono(34), INK, '0em'); });
+  // the bars wipe over them, left to right, one after another
+  ctx.globalAlpha = a;
+  [0, 1, 2].forEach((i) => { const w = ctx.measureText(vals[i]).width + 16; bar(cols[i] - 8, y0 + 58, Math.max(w, 250), 52, seg(s, 1.25 + i * 0.16, 0.42, outQuint)); });
+  ctx.globalAlpha = a * seg(s, 1.85, 0.4, outQuint);
+  ctx.fillStyle = GREEN; ctx.beginPath(); ctx.arc(cols[3] + 8, y0 + 82, 6, 0, 6.2832); ctx.fill();
+  text('valid', cols[3] + 30, y0 + 94, mono(30), GREEN, '0.04em');
+  ctx.globalAlpha = 1;
+}
+// 3. Any token in.                                            5.0 – 7.3
+function sceneShield(t) {
+  const a = window_(t, 5.0, 7.4); if (a <= 0) return;
+  const s = t - 5.0;
+  ctx.globalAlpha = a * seg(s, 0, 0.6, outQuint);
+  text('Any token in.', 120, 300, sans(96), INK, '-0.04em');
+  text('Stocks, USDG, memecoins. Yours only.', 120, 380, sans(34, 500), INK2, '-0.01em');
+  const merge = seg(s, 1.35, 0.7, inOut);
+  const barX = 120, barY = 700, barW = 900;
+  // chips slide up into place, then fold into the bar
+  let x = 120;
+  chips.forEach((c, i) => {
+    const arrive = seg(s, 0.35 + i * 0.12, 0.6, outQuint);
+    const tx = lerp(x, barX + barW * (0.15 + 0.22 * i), merge), ty = lerp(560 + (1 - arrive) * 40, barY + 20, merge);
+    ctx.globalAlpha = a * arrive * (1 - merge);
+    const w = chip(c, tx, ty, 1, lerp(1, 0.6, merge));
+    x += (w || 190) + 18;
+  });
+  ctx.globalAlpha = a;
+  bar(barX, barY, barW, 44, seg(s, 1.75, 0.6, outQuint));
+  ctx.globalAlpha = a * seg(s, 2.05, 0.4, outQuint);
+  text('YOURS ONLY', barX + barW + 36, barY + 32, mono(20), INK3, '0.24em');
+  ctx.globalAlpha = 1;
+}
+// 4. Sealed batches.                                          7.3 – 9.3
+function sceneTrade(t) {
+  const a = window_(t, 7.3, 9.35); if (a <= 0) return;
+  const s = t - 7.3;
+  ctx.globalAlpha = a * seg(s, 0, 0.6, outQuint);
+  text('Sealed batches.', 120, 300, sans(96), INK, '-0.04em');
+  text('Orders clear together at one price.', 120, 380, sans(34, 500), INK2, '-0.01em');
+  const base = 880, hs = [110, 210, 70, 268, 156];
+  hs.forEach((h, i) => { const p = seg(s, 0.3 + i * 0.1, 0.7, outQuint); ctx.globalAlpha = a; ctx.fillStyle = BONE2; roundRect(120 + i * 96, base - h * p, 72, h * p, 4); ctx.fill(); });
+  ctx.globalAlpha = a * seg(s, 0.9, 0.4, outQuint);
+  ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(640, 720); ctx.lineTo(760, 720); ctx.lineTo(748, 708); ctx.moveTo(760, 720); ctx.lineTo(748, 732); ctx.stroke();
+  const big = seg(s, 1.0, 0.8, outQuint);
+  ctx.globalAlpha = a; ctx.fillStyle = BONE; roundRect(820, base - 380 * big, 300, 380 * big, 8); ctx.fill();
+  ctx.globalAlpha = a * seg(s, 1.5, 0.4, outQuint);
+  if (big > 0.35) text('ONE PRICE', 970, base - 380 * big + 46, mono(20), BG, '0.24em', 'center');
+  text('ORDERS', 120, base + 44, mono(18), INK3, '0.22em');
+  text('60S BATCH', 1120, base + 44, mono(18), INK3, '0.22em', 'right');
+  ctx.globalAlpha = 1;
+}
+// 5. End card.                                                9.3 – 10
+function sceneEnd(t) {
+  const a = seg(t, 9.3, 0.5, outQuint); if (a <= 0) return;
+  solidMark(960, 470, 150, a);
+  ctx.globalAlpha = a * seg(t, 9.5, 0.4, outQuint);
+  text('ELYSIAN', 960, 640, sans(48), INK, '0.42em', 'center');
+  ctx.globalAlpha = a * seg(t, 9.65, 0.35, outQuint);
+  ctx.font = sans(30, 500); ctx.letterSpacing = '-0.01em';
+  const w1 = ctx.measureText('The privacy layer for ').width, w2 = ctx.measureText('Robinhood Chain.').width;
+  text('The privacy layer for ', 960 - (w1 + w2) / 2, 712, sans(30, 500), INK2, '-0.01em');
+  text('Robinhood Chain.', 960 - (w1 + w2) / 2 + w1, 712, sans(30, 500), GREEN, '-0.01em');
+  ctx.globalAlpha = 1;
+}
+
+function draw(t) {
+  backdrop(t);
+  const endFade = 1 - seg(t, 9.25, 0.4, inOut);
+  sceneOpen(t); sceneLedger(t); sceneShield(t); sceneTrade(t);
+  label(t, endFade * seg(t, 0.5, 0.6, outQuint));
+  // Scenes 2–4 keep the small solid mark bottom left, like the graphics.
+  if (t > 2.2 && t < 9.3) { const a = window_(t, 2.2, 9.35); solidMark(154, H - 118, 52, a); ctx.globalAlpha = a; text('ELYSIAN', 200, H - 104, sans(22), INK, '0.42em'); ctx.globalAlpha = 1; }
+  sceneEnd(t);
+}
+
+window.__ready = Promise.all([ready, document.fonts.load('600 96px Geist'), document.fonts.load('500 20px "Geist Mono"')]).then(() => true);
+window.__seek = (t) => { draw(t); return true; };
+window.__record = async () => {
+  const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: W, height: H, frameRate: FPS }, fastStart: 'in-memory' });
+  let failure = null;
+  const encoder = new VideoEncoder({ output: (chunk, meta) => muxer.addVideoChunk(chunk, meta), error: (e) => { failure = e; } });
+  encoder.configure({ codec: 'avc1.640028', width: W, height: H, bitrate: 9_000_000, framerate: FPS, avc: { format: 'avc' }, latencyMode: 'quality' });
+  const n = FPS * DUR;
+  for (let i = 0; i < n; i++) {
+    draw(i / FPS);
+    const frame = new VideoFrame(document.getElementById('c'), { timestamp: Math.round((i * 1e6) / FPS), duration: Math.round(1e6 / FPS) });
+    encoder.encode(frame, { keyFrame: i % 60 === 0 });
+    frame.close();
+    if (failure) throw new Error('encoder: ' + failure.message);
+    if (encoder.encodeQueueSize > 8) await new Promise((r) => setTimeout(r, 20));
+  }
+  await encoder.flush();
+  muxer.finalize();
+  window.__mp4 = new Uint8Array(muxer.target.buffer);
+  return window.__mp4.length;
+};
+// The file crosses the debugging socket in slices, base64 encoded.
+window.__chunk = (offset, length) => {
+  const bytes = window.__mp4.subarray(offset, offset + length);
+  let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+};
+window.__support = async () => (await VideoEncoder.isConfigSupported({ codec: 'avc1.640028', width: W, height: H, bitrate: 9_000_000, framerate: FPS })).supported;
+</script></body></html>

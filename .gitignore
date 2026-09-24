@@ -24,3 +24,8 @@ node/data/
 e2e-*.png
 cdp-profile-*/
 .DS_Store
+
+# Brand render scratch: preview frames and the inlined pages the renderers write.
+brand/video/frames/
+brand/video/.chrome-*/
+brand/**/.*.render.html

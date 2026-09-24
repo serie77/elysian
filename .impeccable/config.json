@@ -1,0 +1,41 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "brand/video/elysian.html"
+        ],
+        "createdAt": "2026-09-24T14:58:17.861Z",
+        "reason": "render fixture: offscreen font warm-up element on a canvas video page, never shown"
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "brand/video/elysian.html"
+        ],
+        "createdAt": "2026-09-24T14:58:18.018Z",
+        "reason": "render fixture: the canvas stage is intentionally clipped to 1920x1080 for frame capture"
+      },
+      {
+        "rule": "overused-font",
+        "value": "geist",
+        "createdAt": "2026-09-24T15:04:41.769Z",
+        "reason": "user decided: Elysian brand typeface is Geist with Geist Mono, used across the site and every brand asset"
+      },
+      {
+        "rule": "wide-tracking",
+        "value": "*",
+        "files": [
+          "brand/src/og.html"
+        ],
+        "createdAt": "2026-09-24T15:04:41.980Z",
+        "reason": "false positive: the tracked text is the uppercase ELYSIAN wordmark and a short uppercase mono label, not body copy"
+      }
+    ]
+  }
+}

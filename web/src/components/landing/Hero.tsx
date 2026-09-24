@@ -27,6 +27,11 @@ export function Hero() {
       .then((s) => setTxs(s.transactions))
       .catch(() => setTxs(null));
   }, []);
+  // Count the live figure up once it arrives, like the fixed ones.
+  useEffect(() => {
+    if (txs === null || txs === 0) return;
+    animate('.hero-live', { textContent: [0, txs], modifier: utils.round(0), duration: 1400, ease: 'outExpo' });
+  }, [txs]);
 
   const root = useAnime(
     (scope) => {
@@ -49,7 +54,7 @@ export function Hero() {
 
   return (
     <section ref={root} className="hero relative flex min-h-dvh flex-col overflow-hidden">
-      <Emblem className="pointer-events-none absolute right-[-10vw] top-[7vh] h-[40vh] w-[120vw] opacity-90 md:right-[-13vw] md:top-[3vh] md:h-[88vh] md:w-[58vw] md:opacity-100" />
+      <Emblem className="pointer-events-none absolute right-[-10vw] top-[7vh] h-[40vh] w-[120vw] opacity-55 md:right-[-13vw] md:top-[3vh] md:h-[88vh] md:w-[58vw] md:opacity-100" />
 
       <div className="container-x relative flex flex-1 flex-col justify-end pb-10 pt-40 md:pb-14">
         <div className="hero-copy max-w-[860px]">
@@ -60,8 +65,8 @@ export function Hero() {
             className="hero-title display block text-[clamp(2.9rem,7.1vw,6.9rem)]"
             segments={[{ t: 'The privacy layer' }, { t: 'for' }, { t: 'Robinhood Chain.', green: true }]}
           />
-          <p className="hero-fade will-reveal mt-8 flex items-center gap-3 text-[16px] font-medium tracking-[-0.01em] text-[var(--ink)] md:text-[18px]">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--bone)]" />
+          <p className="hero-fade will-reveal mt-8 flex items-start gap-3 text-[16px] font-medium tracking-[-0.01em] text-[var(--ink)] md:text-[18px]">
+            <span className="mt-[7px] inline-block h-2.5 w-2.5 flex-none rounded-full bg-[var(--bone)] md:mt-2" />
             <span>
               Buy stocks, memecoins or any token on <span className="green">Robinhood Chain</span>, and send them to anyone. Privately.
             </span>
@@ -95,7 +100,7 @@ export function Hero() {
             </div>
           ))}
           <div className="hero-stat will-reveal border-l border-t border-[var(--line)] py-6 pl-6 md:border-t-0 md:py-8 md:pl-8">
-            <dd className="h2 tabular text-[clamp(1.9rem,3.4vw,3rem)]">{txs === null ? '–' : txs.toLocaleString('en-US')}</dd>
+            <dd className="h2 tabular text-[clamp(1.9rem,3.4vw,3rem)]">{txs === null ? '–' : <span className="hero-live">{txs.toLocaleString('en-US')}</span>}</dd>
             <dt className="mt-2 text-[13px] font-medium tracking-[-0.005em] text-[var(--ink-3)]">Shielded transactions so far</dt>
           </div>
         </dl>
